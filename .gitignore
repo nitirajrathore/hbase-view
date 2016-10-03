@@ -2,3 +2,5 @@
 .idea/*
 target/*
 project/*
+hbase-view.iml
+src/main/main.iml
