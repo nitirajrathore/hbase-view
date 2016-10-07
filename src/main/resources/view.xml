@@ -38,34 +38,23 @@
       <required>true</required>
     </parameter>
 
-<!--
     <resource>
-        <name>job</name>
-        <plural-name>jobs</plural-name>
+        <name>phoenixJob</name>
+        <plural-name>phoenixJobs</plural-name>
         <id-property>id</id-property>
-        <resource-class>org.apache.ambari.view.hive2.resources.jobs.viewJobs.JobImpl</resource-class>
-        <provider-class>org.apache.ambari.view.hive2.resources.jobs.JobResourceProvider</provider-class>
-        <service-class>org.apache.ambari.view.hive2.resources.jobs.JobService</service-class>
+        <resource-class>org.apache.ambari.view.hbase.jobs.impl.PhoenixJobImpl</resource-class>
+        <provider-class>org.apache.ambari.view.hbase.ambari.PhoenixJobResourceProvider</provider-class>
+        <service-class>org.apache.ambari.view.hbase.rest.PhoenixJobService</service-class>
     </resource>
--->
 
-    <!--<resource>-->
-        <!--<name>upload</name>-->
-        <!--<plural-name>uploads</plural-name>-->
-        <!--<service-class>org.apache.ambari.view.hive2.resources.uploads.UploadService</service-class>-->
-    <!--</resource>-->
+    <resource>
+        <name>servicefactory</name>
+        <service-class>org.apache.ambari.view.hbase.core.ServiceFactory</service-class>
+    </resource>
 
     <persistence>
         <entity>
             <class>org.apache.ambari.view.hbase.jobs.impl.PhoenixJobImpl</class>
-            <id-property>id</id-property>
-        </entity>
-        <entity>
-            <class>org.apache.ambari.view.hbase.jobs.impl.HbaseJobImpl</class>
-            <id-property>id</id-property>
-        </entity>
-        <entity>
-            <class>org.apache.ambari.view.hbase.jobs.impl.MultipleJobImpl</class>
             <id-property>id</id-property>
         </entity>
     </persistence>

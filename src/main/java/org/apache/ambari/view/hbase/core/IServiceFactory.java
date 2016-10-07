@@ -16,45 +16,14 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.jobs.impl;
+package org.apache.ambari.view.hbase.core;
 
-import org.apache.ambari.view.hbase.jobs.Job;
+public interface IServiceFactory {
+  public DatabaseConfig getDatabaseConfig();
 
-import java.util.Date;
+  public PhoenixConfig getPhoenixConfig();
 
-public abstract class JobImpl implements Job {
-  public String id;
-  private Date submittedDate;
-  private Long duration;
-  private String owner;
+  public HbaseConfig getHbaseConfig();
 
-  @Override
-  public String getId() {
-    return id;
-  }
-
-  @Override
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  @Override
-  public Date getSubmittedDate() {
-    return submittedDate;
-  }
-
-  @Override
-  public Long getDuration() {
-    return duration;
-  }
-
-  @Override
-  public String getOwner() {
-    return owner;
-  }
-
-  @Override
-  public void setOwner(String owner) {
-    this.owner = owner;
-  }
+  public AmbariConfig getAmbariConfig();
 }

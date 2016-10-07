@@ -18,7 +18,7 @@
 
 package org.apache.ambari.view.hbase.jobs.impl;
 
-import org.apache.ambari.view.hbase.jobs.JobType;
+import org.apache.ambari.view.hbase.jobs.types.JobType;
 
 public class DatabaseJobImpl extends JobImpl{
   private JobType jobType = JobType.DATABASE_JOB;

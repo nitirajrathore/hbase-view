@@ -16,11 +16,11 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.jobs;
+package org.apache.ambari.view.hbase.jobs.types;
 
-public enum JobType {
-  PHOENIX_JOB,
-  HBASE_JOB,
-  DATABASE_JOB,
-  MULTIPLE_JOB
+public enum PhoenixQueryType {
+  GENERIC,
+  CREATE_TABLE,
+  CREATE_SCHEMA,
+  ALTER_TABLE
 }

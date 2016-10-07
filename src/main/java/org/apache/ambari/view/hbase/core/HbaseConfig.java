@@ -16,11 +16,7 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.jobs;
+package org.apache.ambari.view.hbase.core;
 
-public enum DatabaseQueryType {
-  CREATE_JOB,
-  FETCH_JOB_STATUS,
-  UPDATE_JOB,
-  FETCH_JOB
+public class HbaseConfig {
 }

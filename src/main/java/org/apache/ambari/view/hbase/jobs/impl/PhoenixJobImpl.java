@@ -18,13 +18,25 @@
 
 package org.apache.ambari.view.hbase.jobs.impl;
 
-import org.apache.ambari.view.hbase.jobs.JobType;
+import org.apache.ambari.view.hbase.jobs.PhoenixJob;
+import org.apache.ambari.view.hbase.jobs.types.JobType;
+import org.apache.ambari.view.hbase.jobs.types.PhoenixQueryType;
 
-public class PhoenixJobImpl extends JobImpl {
+public class PhoenixJobImpl extends JobImpl implements PhoenixJob {
   private JobType jobType = JobType.PHOENIX_JOB;
 
   @Override
   public JobType getType() {
     return jobType;
+  }
+
+  @Override
+  public String getQuery() {
+    return null;
+  }
+
+  @Override
+  public PhoenixQueryType getPhoenixQueryType() {
+    return null;
   }
 }

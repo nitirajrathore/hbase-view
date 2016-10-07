@@ -18,16 +18,15 @@
 
 package org.apache.ambari.view.hbase.jobs;
 
+import org.apache.ambari.view.hbase.ambari.PersonalResource;
+import org.apache.ambari.view.hbase.jobs.types.JobType;
+
 import java.util.Date;
 
-public interface Job {
-  public String getJobId();
-
+public interface Job extends PersonalResource {
   public Date getSubmittedDate();
 
   public JobType getType();
 
   public Long getDuration();
-
-  public String getOwner();
 }

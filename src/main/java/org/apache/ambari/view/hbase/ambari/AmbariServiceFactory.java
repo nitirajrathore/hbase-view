@@ -16,45 +16,39 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.jobs.impl;
+package org.apache.ambari.view.hbase.ambari;
 
-import org.apache.ambari.view.hbase.jobs.Job;
+import org.apache.ambari.view.ViewContext;
+import org.apache.ambari.view.hbase.core.AmbariConfig;
+import org.apache.ambari.view.hbase.core.DatabaseConfig;
+import org.apache.ambari.view.hbase.core.HbaseConfig;
+import org.apache.ambari.view.hbase.core.IServiceFactory;
+import org.apache.ambari.view.hbase.core.PhoenixConfig;
 
-import java.util.Date;
+public class AmbariServiceFactory implements IServiceFactory {
 
-public abstract class JobImpl implements Job {
-  public String id;
-  private Date submittedDate;
-  private Long duration;
-  private String owner;
+  private ViewContext viewContext = null;
 
+  public AmbariServiceFactory(ViewContext viewContext){
+    this.viewContext = viewContext;
+  }
   @Override
-  public String getId() {
-    return id;
+  public DatabaseConfig getDatabaseConfig() {
+    return null; // no op as in ambari database is managed by Ambari
   }
 
   @Override
-  public void setId(String id) {
-    this.id = id;
+  public PhoenixConfig getPhoenixConfig() {
+    return null;
   }
 
   @Override
-  public Date getSubmittedDate() {
-    return submittedDate;
+  public HbaseConfig getHbaseConfig() {
+    return null;
   }
 
   @Override
-  public Long getDuration() {
-    return duration;
-  }
-
-  @Override
-  public String getOwner() {
-    return owner;
-  }
-
-  @Override
-  public void setOwner(String owner) {
-    this.owner = owner;
+  public AmbariConfig getAmbariConfig() {
+    return null;
   }
 }

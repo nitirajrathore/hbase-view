@@ -16,11 +16,7 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.jobs;
+package org.apache.ambari.view.hbase.core;
 
-public enum PhoenixQueryType {
-  GENERIC,
-  CREATE_TABLE,
-  CREATE_SCHEMA,
-  ALTER_TABLE
+public class DatabaseConfig {
 }
