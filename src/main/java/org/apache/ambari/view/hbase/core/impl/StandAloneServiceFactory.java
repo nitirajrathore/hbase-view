@@ -16,30 +16,28 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.ambari;
+package org.apache.ambari.view.hbase.core.impl;
 
-import org.apache.ambari.view.ViewContext;
 import org.apache.ambari.view.hbase.core.AmbariConfig;
 import org.apache.ambari.view.hbase.core.DatabaseConfig;
 import org.apache.ambari.view.hbase.core.HbaseConfig;
 import org.apache.ambari.view.hbase.core.IServiceFactory;
 import org.apache.ambari.view.hbase.core.PhoenixConfig;
 import org.apache.ambari.view.hbase.core.PhoenixJobService;
-import org.apache.ambari.view.hbase.core.impl.PhoenixJobServiceImpl;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class AmbariServiceFactory implements IServiceFactory {
-
-  private ViewContext viewContext = null;
-  private PhoenixJobResourceManager phoenixJobResourceManager;
+public class StandAloneServiceFactory implements IServiceFactory {
+  private ClassPathXmlApplicationContext ctx;
   private PhoenixJobService phoenixJobService;
-  public AmbariServiceFactory(ViewContext viewContext){
-    this.viewContext = viewContext;
-    phoenixJobResourceManager = new PhoenixJobResourceManager(viewContext);
-    phoenixJobService = new PhoenixJobServiceImpl(phoenixJobResourceManager);
+  public StandAloneServiceFactory(){
+    //Create Spring application context
+    ctx = new ClassPathXmlApplicationContext("classpath:/spring.xml");
+    PhoenixJobDBService phoenixJobDBService = ctx.getBean(PhoenixJobDBService.class);
+    phoenixJobService = new PhoenixJobServiceImpl(phoenixJobDBService);
   }
   @Override
   public DatabaseConfig getDatabaseConfig() {
-    return null; // no op as in ambari database is managed by Ambari
+    return null;
   }
 
   @Override
@@ -59,6 +57,7 @@ public class AmbariServiceFactory implements IServiceFactory {
 
   @Override
   public PhoenixJobService getPhoenixJobService() {
-    return phoenixJobService;
+    return null;
   }
+
 }

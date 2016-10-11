@@ -18,7 +18,7 @@
 
 package org.apache.ambari.view.hbase.jobs;
 
-import org.apache.ambari.view.hbase.ambari.PersonalResource;
+import org.apache.ambari.view.hbase.core.persistence.PersonalResource;
 import org.apache.ambari.view.hbase.jobs.types.JobType;
 
 import java.util.Date;

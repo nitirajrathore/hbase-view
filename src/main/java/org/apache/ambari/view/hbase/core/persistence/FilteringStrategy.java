@@ -16,7 +16,17 @@
  * limitations under the License.
  */
 
-package org.apache.ambari.view.hbase.ambari;
+package org.apache.ambari.view.hbase.core.persistence;
 
-public interface PersonalResource extends Indexed, Owned {
+/**
+ * Filtering strategy for stored objects
+ */
+public interface FilteringStrategy {
+  /**
+   * Check whether item conforms chosen filter or not
+   * @param item item to check
+   * @return true if item conforms this filter
+   */
+  boolean isConform(Indexed item);
+  String whereStatement();
 }

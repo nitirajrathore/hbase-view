@@ -21,6 +21,7 @@ package org.apache.ambari.view.hbase.core;
 import com.google.inject.Inject;
 import org.apache.ambari.view.ViewContext;
 import org.apache.ambari.view.hbase.ambari.AmbariServiceFactory;
+import org.apache.ambari.view.hbase.core.impl.StandAloneServiceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

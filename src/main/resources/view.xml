@@ -44,7 +44,7 @@
         <id-property>id</id-property>
         <resource-class>org.apache.ambari.view.hbase.jobs.impl.PhoenixJobImpl</resource-class>
         <provider-class>org.apache.ambari.view.hbase.ambari.PhoenixJobResourceProvider</provider-class>
-        <service-class>org.apache.ambari.view.hbase.rest.PhoenixJobService</service-class>
+        <service-class>org.apache.ambari.view.hbase.rest.PhoenixJobRestService</service-class>
     </resource>
 
     <resource>

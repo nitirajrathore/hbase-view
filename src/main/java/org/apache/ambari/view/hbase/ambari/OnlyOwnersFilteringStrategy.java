@@ -18,6 +18,10 @@
 
 package org.apache.ambari.view.hbase.ambari;
 
+import org.apache.ambari.view.hbase.core.persistence.FilteringStrategy;
+import org.apache.ambari.view.hbase.core.persistence.Indexed;
+import org.apache.ambari.view.hbase.core.persistence.Owned;
+
 public class OnlyOwnersFilteringStrategy implements FilteringStrategy {
   private final String username;
 

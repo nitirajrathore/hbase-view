@@ -16,21 +16,7 @@
  * limitations under the License.
  */
 
-package org.apache.ambari.view.hbase.ambari;
+package org.apache.ambari.view.hbase.core.persistence;
 
-/**
- * Interface to represent item with owner
- */
-public interface Owned {
-  /**
-   * Get the owner
-   * @return owner
-   */
-  String getOwner();
-
-  /**
-   * Set owner
-   * @param owner owner
-   */
-  void setOwner(String owner);
+public interface PersonalResource extends Indexed, Owned {
 }

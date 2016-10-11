@@ -16,28 +16,21 @@
  * limitations under the License.
  */
 
-package org.apache.ambari.view.hbase.ambari;
+package org.apache.ambari.view.hbase.core.persistence;
 
 /**
- * Thrown when item was not found in DB
+ * Interface to represent item with identifier
  */
-public class ItemNotFound extends Exception {
-  public ItemNotFound() {
-  }
+public interface Indexed {
+  /**
+   * Get the ID
+   * @return ID
+   */
+  String getId();
 
-  public ItemNotFound(String message) {
-    super(message);
-  }
-
-  public ItemNotFound(String message, Throwable cause) {
-    super(message, cause);
-  }
-
-  public ItemNotFound(Throwable cause) {
-    super(cause);
-  }
-
-  public ItemNotFound(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-    super(message, cause, enableSuppression, writableStackTrace);
-  }
+  /**
+   * Set ID
+   * @param id ID
+   */
+  void setId(String id);
 }

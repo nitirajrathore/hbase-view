@@ -16,8 +16,18 @@
  * limitations under the License.
  */
 
-package org.apache.ambari.view.hbase.ambari;
+package org.apache.ambari.view.hbase.core.persistence;
 
-public interface IStorageFactory {
-  Storage getStorage();
+import java.util.List;
+
+public interface IResourceManager<T extends Indexed> {
+  T create(T object);
+
+  T read(Object id) throws ItemNotFound;
+
+  List<T> readAll(FilteringStrategy filteringStrategy);
+
+  T update(T newObject, String id) throws ItemNotFound;
+
+  void delete(Object resourceId) throws ItemNotFound;
 }

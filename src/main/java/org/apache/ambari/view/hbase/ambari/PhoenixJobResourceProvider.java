@@ -18,6 +18,7 @@
 
 package org.apache.ambari.view.hbase.ambari;
 
+import com.google.inject.Inject;
 import org.apache.ambari.view.NoSuchResourceException;
 import org.apache.ambari.view.ReadRequest;
 import org.apache.ambari.view.ResourceAlreadyExistsException;
@@ -25,12 +26,12 @@ import org.apache.ambari.view.ResourceProvider;
 import org.apache.ambari.view.SystemException;
 import org.apache.ambari.view.UnsupportedPropertyException;
 import org.apache.ambari.view.ViewContext;
+import org.apache.ambari.view.hbase.core.persistence.ItemNotFound;
 import org.apache.ambari.view.hbase.jobs.PhoenixJob;
 import org.apache.ambari.view.hbase.jobs.impl.PhoenixJobImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;

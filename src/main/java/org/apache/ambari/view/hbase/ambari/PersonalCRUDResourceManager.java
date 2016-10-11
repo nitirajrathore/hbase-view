@@ -19,6 +19,8 @@
 package org.apache.ambari.view.hbase.ambari;
 
 import org.apache.ambari.view.ViewContext;
+import org.apache.ambari.view.hbase.core.persistence.ItemNotFound;
+import org.apache.ambari.view.hbase.core.persistence.PersonalResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -18,24 +18,15 @@
 
 package org.apache.ambari.view.hbase.core;
 
-public class StandAloneServiceFactory implements IServiceFactory {
-  @Override
-  public DatabaseConfig getDatabaseConfig() {
-    return null;
-  }
+import org.apache.ambari.view.hbase.core.persistence.ItemNotFound;
+import org.apache.ambari.view.hbase.jobs.PhoenixJob;
 
-  @Override
-  public PhoenixConfig getPhoenixConfig() {
-    return null;
-  }
+import java.util.List;
 
-  @Override
-  public HbaseConfig getHbaseConfig() {
-    return null;
-  }
+public interface PhoenixJobService {
+  public String submitPhoenixJob(PhoenixJob job);
 
-  @Override
-  public AmbariConfig getAmbariConfig() {
-    return null;
-  }
+  public PhoenixJob getPhoenixJob(String id) throws ItemNotFound;
+
+  public List<PhoenixJob> getPhoenixJobs();
 }

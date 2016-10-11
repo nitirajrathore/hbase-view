@@ -26,4 +26,6 @@ public interface IServiceFactory {
   public HbaseConfig getHbaseConfig();
 
   public AmbariConfig getAmbariConfig();
+
+  public PhoenixJobService getPhoenixJobService();
 }

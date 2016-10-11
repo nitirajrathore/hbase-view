@@ -16,17 +16,21 @@
  * limitations under the License.
  */
 
-package org.apache.ambari.view.hbase.ambari;
+package org.apache.ambari.view.hbase.core.persistence;
 
 /**
- * Filtering strategy for stored objects
+ * Interface to represent item with owner
  */
-public interface FilteringStrategy {
+public interface Owned {
   /**
-   * Check whether item conforms chosen filter or not
-   * @param item item to check
-   * @return true if item conforms this filter
+   * Get the owner
+   * @return owner
    */
-  boolean isConform(Indexed item);
-  String whereStatement();
+  String getOwner();
+
+  /**
+   * Set owner
+   * @param owner owner
+   */
+  void setOwner(String owner);
 }

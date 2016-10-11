@@ -20,7 +20,9 @@ package org.apache.ambari.view.hbase.ambari;
 
 import org.apache.ambari.view.PersistenceException;
 import org.apache.ambari.view.ViewContext;
-import org.apache.ambari.view.commons.exceptions.ServiceFormattedException;
+import org.apache.ambari.view.hbase.core.persistence.FilteringStrategy;
+import org.apache.ambari.view.hbase.core.persistence.Indexed;
+import org.apache.ambari.view.hbase.core.persistence.ItemNotFound;
 import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
