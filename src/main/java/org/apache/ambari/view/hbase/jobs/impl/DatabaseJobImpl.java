@@ -23,7 +23,7 @@ import org.apache.ambari.view.hbase.jobs.types.JobType;
 public class DatabaseJobImpl extends JobImpl{
   private JobType jobType = JobType.DATABASE_JOB;
 
-  @Override
+//  @Override
   public JobType getType() {
     return jobType;
   }

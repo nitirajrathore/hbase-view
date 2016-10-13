@@ -18,25 +18,109 @@
 
 package org.apache.ambari.view.hbase.jobs.impl;
 
+//public class PhoenixJobImpl extends JobImpl implements PhoenixJob {
+//  private JobType jobType = JobType.PHOENIX_JOB;
+//
+//  private String query;
+//  private PhoenixQueryType phoenixQueryType;
+//
+//  public void setQuery(String query) {
+//    this.query = query;
+//  }
+//
+//  public void setPhoenixQueryType(PhoenixQueryType phoenixQueryType) {
+//    this.phoenixQueryType = phoenixQueryType;
+//  }
+//
+//  @Override
+//  public JobType getType() {
+//    return jobType;
+//  }
+//
+//  @Override
+//  public String getQuery() {
+//    return query;
+//  }
+//
+//  @Override
+//  public PhoenixQueryType getPhoenixQueryType() {
+//    return phoenixQueryType;
+//  }
+//}
+
+
+import org.apache.ambari.view.hbase.core.persistence.Overridable;
+import org.apache.ambari.view.hbase.jobs.Job;
 import org.apache.ambari.view.hbase.jobs.PhoenixJob;
-import org.apache.ambari.view.hbase.jobs.types.JobType;
-import org.apache.ambari.view.hbase.jobs.types.PhoenixQueryType;
 
-public class PhoenixJobImpl extends JobImpl implements PhoenixJob {
-  private JobType jobType = JobType.PHOENIX_JOB;
+import java.util.Date;
 
-  @Override
-  public JobType getType() {
-    return jobType;
+public class PhoenixJobImpl implements PhoenixJob, Job, Overridable<PhoenixJob> {
+  private String query;
+  private String id;
+  private String owner;
+  private Long duration;
+  private Date submittedDate;
+
+  public PhoenixJobImpl() {
   }
 
-  @Override
   public String getQuery() {
-    return null;
+    return query;
+  }
+
+  public void setQuery(String query) {
+    this.query = query;
+  }
+
+  public String getId() {
+    return id;
   }
 
   @Override
-  public PhoenixQueryType getPhoenixQueryType() {
-    return null;
+  public void setId(String id) {
+    this.id = id;
+  }
+
+//  public void setId(Long id) {
+//  }
+
+  public String getOwner() {
+    return owner;
+  }
+
+  public void setOwner(String owner) {
+    this.owner = owner;
+  }
+
+  public Long getDuration() {
+    return duration;
+  }
+
+  public void setDuration(Long duration) {
+    this.duration = duration;
+  }
+
+  public Date getSubmittedDate() {
+    return submittedDate;
+  }
+
+  public void setSubmittedDate(Date submittedDate) {
+    this.submittedDate = submittedDate;
+  }
+
+  @Override
+  public void override(PhoenixJob phoenixJob) {
+    if (null != phoenixJob.getDuration())
+      this.duration = phoenixJob.getDuration();
+
+    if (null != phoenixJob.getOwner())
+      this.owner = phoenixJob.getOwner();
+
+    if (null != phoenixJob.getQuery())
+      this.query = phoenixJob.getQuery();
+
+    if (null != phoenixJob.getSubmittedDate())
+      this.submittedDate = phoenixJob.getSubmittedDate();
   }
 }

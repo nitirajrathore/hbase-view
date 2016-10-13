@@ -57,4 +57,12 @@ public abstract class JobImpl implements Job {
   public void setOwner(String owner) {
     this.owner = owner;
   }
+
+  public void setSubmittedDate(Date submittedDate) {
+    this.submittedDate = submittedDate;
+  }
+
+  public void setDuration(Long duration) {
+    this.duration = duration;
+  }
 }

@@ -76,8 +76,7 @@ public class PhoenixJobResourceProvider implements ResourceProvider<PhoenixJob> 
 
   @Override
   public void createResource(String s, Map<String, Object> stringObjectMap) throws SystemException, ResourceAlreadyExistsException, NoSuchResourceException, UnsupportedPropertyException {
-    PhoenixJob item = null;
-      item = new PhoenixJobImpl();
+    PhoenixJob item = new PhoenixJobImpl();
     getResourceManager().create(item);
   }
 

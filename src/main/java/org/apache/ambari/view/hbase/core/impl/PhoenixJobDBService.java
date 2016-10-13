@@ -5,17 +5,12 @@ import org.apache.ambari.view.hbase.core.persistence.IResourceManager;
 import org.apache.ambari.view.hbase.core.persistence.ItemNotFound;
 import org.apache.ambari.view.hbase.core.persistence.PhoenixJobDao;
 import org.apache.ambari.view.hbase.jobs.PhoenixJob;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Component
 public class PhoenixJobDBService implements IResourceManager<PhoenixJob> {
 
-	@Autowired
-	private PhoenixJobDao productDao;
+	private PhoenixJobDao phoenixJobDao = new PhoenixJobDao();
 
 //	@Transactional
 //	public void add(PhoenixJob product) {
@@ -24,30 +19,28 @@ public class PhoenixJobDBService implements IResourceManager<PhoenixJob> {
 //
 //	public void addAll(Collection<PhoenixJob> products) {
 //		for (PhoenixJob product : products) {
-//			productDao.persist(product);
+//			phoenixJobDao.persist(product);
 //		}
 //	}
 
-	@Transactional(readOnly = true)
 	public List<PhoenixJob> readAll(FilteringStrategy filteringStrategy) {
-		return productDao.findAll();
+		return phoenixJobDao.findAll();
 	}
 
 	@Override
-	@Transactional
 	public PhoenixJob create(PhoenixJob object) {
-		productDao.persist(object);
+		phoenixJobDao.persist(object);
 		return object;
 	}
 
 	@Override
 	public PhoenixJob read(Object id) throws ItemNotFound {
-		return null;
+		return phoenixJobDao.find(id);
 	}
 
 	@Override
 	public PhoenixJob update(PhoenixJob newObject, String id) throws ItemNotFound {
-		return null;
+		return phoenixJobDao.update(newObject, id);
 	}
 
 	@Override

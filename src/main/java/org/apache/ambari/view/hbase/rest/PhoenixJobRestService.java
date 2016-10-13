@@ -26,12 +26,17 @@ import org.apache.ambari.view.hbase.jobs.impl.PhoenixJobImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import java.util.ArrayList;
 import java.util.List;
 
+@Path("/")
 public class PhoenixJobRestService {
   private final static Logger LOG =
     LoggerFactory.getLogger(PhoenixJobRestService.class);
@@ -44,16 +49,20 @@ public class PhoenixJobRestService {
 
   @GET
   @Path("/phoenixJobs")
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
   public List<PhoenixJob> getPhoenixJobs() {
     LOG.info("getPhoenixJobs Getting serviceFactory..  ");
     List<PhoenixJob> jobs = ServiceFactory.getInstance().getPhoenixJobService().getPhoenixJobs();
     LOG.info("all jobs : " + jobs);
-    return jobs;
+    return new ArrayList<PhoenixJob>(jobs);
   }
 
 
   @POST
   @Path("/phoenixJob")
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
   public String submitPhoenixJob(PhoenixJobImpl phoenixJob) {
     LOG.info("getPhoenixJobs Getting serviceFactory..  ");
     IServiceFactory serviceFactory = ServiceFactory.getInstance();

@@ -16,16 +16,19 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.jobs;
+package org.apache.ambari.view.hbase.core.persistence;
 
-import org.apache.ambari.view.hbase.core.persistence.PersonalResource;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 
-import java.util.Date;
+public class DatabaseServiceFactory {
+  private static EntityManagerFactory emf = Persistence.createEntityManagerFactory("hbase");
+  private static DatabaseServiceFactory factory = new DatabaseServiceFactory();
+  public EntityManagerFactory getEntityManagerFactory() {
+    return emf;
+  }
 
-public interface Job extends PersonalResource {
-  public Date getSubmittedDate();
-
-//  public JobType getType();
-
-  public Long getDuration();
+  public static DatabaseServiceFactory getInstance(){
+    return factory;
+  }
 }

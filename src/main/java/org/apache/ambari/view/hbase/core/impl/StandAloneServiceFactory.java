@@ -24,15 +24,11 @@ import org.apache.ambari.view.hbase.core.HbaseConfig;
 import org.apache.ambari.view.hbase.core.IServiceFactory;
 import org.apache.ambari.view.hbase.core.PhoenixConfig;
 import org.apache.ambari.view.hbase.core.PhoenixJobService;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class StandAloneServiceFactory implements IServiceFactory {
-  private ClassPathXmlApplicationContext ctx;
   private PhoenixJobService phoenixJobService;
   public StandAloneServiceFactory(){
-    //Create Spring application context
-    ctx = new ClassPathXmlApplicationContext("classpath:/spring.xml");
-    PhoenixJobDBService phoenixJobDBService = ctx.getBean(PhoenixJobDBService.class);
+    PhoenixJobDBService phoenixJobDBService = new PhoenixJobDBService();
     phoenixJobService = new PhoenixJobServiceImpl(phoenixJobDBService);
   }
   @Override
@@ -57,7 +53,7 @@ public class StandAloneServiceFactory implements IServiceFactory {
 
   @Override
   public PhoenixJobService getPhoenixJobService() {
-    return null;
+    return phoenixJobService;
   }
 
 }

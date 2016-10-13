@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 public class ServiceFactory {
@@ -48,7 +49,13 @@ public class ServiceFactory {
         if (null == serviceFactory) {
           try {
             LOG.info("Loading view.properties ");
-            viewProperties.load(ServiceFactory.class.getResourceAsStream("view.properties"));
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            InputStream propsStream = classLoader.getResourceAsStream("view.properties");
+
+//            InputStream propsStream = ServiceFactory.class.getResourceAsStream("view.properties");
+            LOG.info("props stream : {}", propsStream );
+            if( null != propsStream )
+              viewProperties.load(propsStream);
           } catch (IOException e) {
             LOG.error("Failed to load view.properties.", e);
           }

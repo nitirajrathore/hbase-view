@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<entity-mappings xmlns="http://xmlns.jcp.org/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence/orm
+        http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd" version="2.1">
+
+  <description>XML Mapping file</description>
+  <package>org.apache.ambari.view.hbase.jobs.impl</package>
+  <entity class="org.apache.ambari.view.hbase.jobs.impl.PhoenixJobImpl">
+    <table name="phoenix_jobs"/>
+    <attributes>
+      <id name="id">
+        <generated-value strategy="TABLE"/>
+      </id>
+      <basic name="query"></basic>
+      <basic name="submittedDate"></basic>
+      <basic name="duration"></basic>
+      <basic name="owner"></basic>
+    </attributes>
+  </entity>
+
+</entity-mappings>
