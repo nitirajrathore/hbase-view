@@ -33,7 +33,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.util.ArrayList;
 import java.util.List;
 
 @Path("/")
@@ -55,7 +54,7 @@ public class PhoenixJobRestService {
     LOG.info("getPhoenixJobs Getting serviceFactory..  ");
     List<PhoenixJob> jobs = ServiceFactory.getInstance().getPhoenixJobService().getPhoenixJobs();
     LOG.info("all jobs : " + jobs);
-    return new ArrayList<PhoenixJob>(jobs);
+    return jobs;
   }
 
 

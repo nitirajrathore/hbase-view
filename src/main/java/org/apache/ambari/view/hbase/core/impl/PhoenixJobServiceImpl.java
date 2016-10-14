@@ -29,26 +29,26 @@ import java.util.List;
 
 public class PhoenixJobServiceImpl implements PhoenixJobService {
 
-  private IResourceManager<PhoenixJob> phoenixJobIResourceManager;
+  private IResourceManager<PhoenixJob> phoenixJobResourceManager;
 
   public PhoenixJobServiceImpl(IResourceManager<PhoenixJob> resourceManager){
-    this.phoenixJobIResourceManager = resourceManager;
+    this.phoenixJobResourceManager = resourceManager;
   }
 
   @Override
   public String submitPhoenixJob(PhoenixJob job){
-    PhoenixJob pj = phoenixJobIResourceManager.create(job);
+    PhoenixJob pj = phoenixJobResourceManager.create(job);
     return pj.getId();
   }
 
   @Override
   public PhoenixJob getPhoenixJob(String id) throws ItemNotFound {
-    return phoenixJobIResourceManager.read(id);
+    return phoenixJobResourceManager.read(id);
   }
 
   @Override
   public List<PhoenixJob> getPhoenixJobs() {
-    return phoenixJobIResourceManager.readAll(new FilteringStrategy() {
+    return phoenixJobResourceManager.readAll(new FilteringStrategy() {
       @Override
       public boolean isConform(Indexed item) {
         return true;
@@ -56,7 +56,7 @@ public class PhoenixJobServiceImpl implements PhoenixJobService {
 
       @Override
       public String whereStatement() {
-        return "1=1";
+        return " 1 = 1 ";
       }
     });
   }

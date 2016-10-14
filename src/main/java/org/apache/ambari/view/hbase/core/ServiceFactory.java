@@ -31,7 +31,8 @@ import java.util.Properties;
 
 public class ServiceFactory {
 
-  @Inject
+  public static final String AMBARI = "ambari";
+  //  @Inject
   private static ViewContext viewContext;
 
   private final static Logger LOG =
@@ -40,7 +41,9 @@ public class ServiceFactory {
   private static IServiceFactory serviceFactory = null;
   private static Properties viewProperties = new Properties();
 
-  public ServiceFactory() {
+  @Inject
+  public ServiceFactory(ViewContext viewContext) {
+    ServiceFactory.viewContext = viewContext;
   }
 
   public static IServiceFactory getInstance() {
@@ -49,10 +52,8 @@ public class ServiceFactory {
         if (null == serviceFactory) {
           try {
             LOG.info("Loading view.properties ");
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            ClassLoader classLoader = ServiceFactory.class.getClassLoader();
             InputStream propsStream = classLoader.getResourceAsStream("view.properties");
-
-//            InputStream propsStream = ServiceFactory.class.getResourceAsStream("view.properties");
             LOG.info("props stream : {}", propsStream );
             if( null != propsStream )
               viewProperties.load(propsStream);
@@ -61,7 +62,7 @@ public class ServiceFactory {
           }
 
           String mode = viewProperties.getProperty("phoenixview.mode");
-          if (null == mode || "ambari".equals(mode)) {
+          if (null == mode || AMBARI.equals(mode)) {
             LOG.info("Creating AmbariServiceFactory with view context : " + viewContext);
             serviceFactory = new AmbariServiceFactory(viewContext);
           } else {

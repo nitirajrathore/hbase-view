@@ -22,6 +22,7 @@ import org.apache.ambari.view.ViewContext;
 import org.apache.ambari.view.hbase.core.persistence.FilteringStrategy;
 import org.apache.ambari.view.hbase.core.persistence.ItemNotFound;
 import org.apache.ambari.view.hbase.jobs.PhoenixJob;
+import org.apache.ambari.view.hbase.jobs.impl.PhoenixJobImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +40,7 @@ public class PhoenixJobResourceManager extends PersonalCRUDResourceManager<Phoen
    * @param context View Context instance
    */
   public PhoenixJobResourceManager(ViewContext context) {
-    super(PhoenixJob.class, context);
+    super(PhoenixJobImpl.class, context);
   }
 
   @Override
