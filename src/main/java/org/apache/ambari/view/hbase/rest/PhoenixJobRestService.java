@@ -18,9 +18,11 @@
 
 package org.apache.ambari.view.hbase.rest;
 
+import org.apache.ambari.view.hbase.ambari.ServiceFormattedException;
 import org.apache.ambari.view.hbase.core.IServiceFactory;
 import org.apache.ambari.view.hbase.core.PhoenixJobService;
 import org.apache.ambari.view.hbase.core.ServiceFactory;
+import org.apache.ambari.view.hbase.core.persistence.ItemNotFound;
 import org.apache.ambari.view.hbase.jobs.PhoenixJob;
 import org.apache.ambari.view.hbase.jobs.impl.PhoenixJobImpl;
 import org.slf4j.Logger;
@@ -33,9 +35,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 
-@Path("/")
+@Path("/phoenixJobs")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 public class PhoenixJobRestService {
   private final static Logger LOG =
     LoggerFactory.getLogger(PhoenixJobRestService.class);
@@ -47,9 +52,7 @@ public class PhoenixJobRestService {
   }
 
   @GET
-  @Path("/phoenixJobs")
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
+  @Path("/")
   public List<PhoenixJob> getPhoenixJobs() {
     LOG.info("getPhoenixJobs Getting serviceFactory..  ");
     List<PhoenixJob> jobs = ServiceFactory.getInstance().getPhoenixJobService().getPhoenixJobs();
@@ -59,9 +62,7 @@ public class PhoenixJobRestService {
 
 
   @POST
-  @Path("/phoenixJob")
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
+  @Path("/")
   public String submitPhoenixJob(PhoenixJobImpl phoenixJob) {
     LOG.info("getPhoenixJobs Getting serviceFactory..  ");
     IServiceFactory serviceFactory = ServiceFactory.getInstance();
@@ -74,11 +75,17 @@ public class PhoenixJobRestService {
   }
 
   @GET
-  @Path("/phoenixJob/{id}")
-  public PhoenixJob getPhoenixJob(@PathParam("id") String id) {
+  @Path("/{id}")
+  public Response getPhoenixJob(@PathParam("id") String id) {
     LOG.info("Getting serviceFactory..  ");
     IServiceFactory serviceFactory = ServiceFactory.getInstance();
     LOG.info("Got serviceFactory : " + serviceFactory);
-    return null;
+    try {
+      PhoenixJob pj = serviceFactory.getPhoenixJobService().getPhoenixJob(id);
+      return Response.ok(pj).build();
+    } catch (ItemNotFound itemNotFound) {
+      LOG.error("exception : ",itemNotFound);
+      throw new ServiceFormattedException(itemNotFound);
+    }
   }
 }

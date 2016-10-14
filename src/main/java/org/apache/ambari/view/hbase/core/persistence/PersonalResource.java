@@ -18,5 +18,7 @@
 
 package org.apache.ambari.view.hbase.core.persistence;
 
-public interface PersonalResource extends Indexed, Owned {
+import java.io.Serializable;
+
+public interface PersonalResource extends Indexed, Owned, Serializable {
 }
