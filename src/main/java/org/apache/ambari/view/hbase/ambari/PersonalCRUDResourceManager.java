@@ -19,7 +19,7 @@
 package org.apache.ambari.view.hbase.ambari;
 
 import org.apache.ambari.view.ViewContext;
-import org.apache.ambari.view.hbase.core.persistence.ItemNotFound;
+import org.apache.ambari.view.hbase.core.persistence.ItemNotFoundException;
 import org.apache.ambari.view.hbase.core.persistence.PersonalResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +47,7 @@ public class PersonalCRUDResourceManager<T extends PersonalResource> extends CRU
   }
 
   @Override
-  public T update(T newObject, String id) throws ItemNotFound {
+  public T update(T newObject, String id) throws ItemNotFoundException {
     return super.update(newObject, id);
   }
 

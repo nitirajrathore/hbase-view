@@ -21,23 +21,23 @@ package org.apache.ambari.view.hbase.core.persistence;
 /**
  * Thrown when item was not found in DB
  */
-public class ItemNotFound extends Exception {
-  public ItemNotFound() {
+public class ItemNotFoundException extends Exception {
+  public ItemNotFoundException() {
   }
 
-  public ItemNotFound(String message) {
+  public ItemNotFoundException(String message) {
     super(message);
   }
 
-  public ItemNotFound(String message, Throwable cause) {
+  public ItemNotFoundException(String message, Throwable cause) {
     super(message, cause);
   }
 
-  public ItemNotFound(Throwable cause) {
+  public ItemNotFoundException(Throwable cause) {
     super(cause);
   }
 
-  public ItemNotFound(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+  public ItemNotFoundException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
     super(message, cause, enableSuppression, writableStackTrace);
   }
 }

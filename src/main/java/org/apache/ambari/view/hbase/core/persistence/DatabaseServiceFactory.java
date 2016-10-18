@@ -24,11 +24,12 @@ import javax.persistence.Persistence;
 public class DatabaseServiceFactory {
   private static EntityManagerFactory emf = Persistence.createEntityManagerFactory("hbase");
   private static DatabaseServiceFactory factory = new DatabaseServiceFactory();
+
   public EntityManagerFactory getEntityManagerFactory() {
     return emf;
   }
 
-  public static DatabaseServiceFactory getInstance(){
+  public static DatabaseServiceFactory getInstance() {
     return factory;
   }
 }

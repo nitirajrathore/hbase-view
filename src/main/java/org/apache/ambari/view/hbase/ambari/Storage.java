@@ -20,7 +20,7 @@ package org.apache.ambari.view.hbase.ambari;
 
 import org.apache.ambari.view.hbase.core.persistence.FilteringStrategy;
 import org.apache.ambari.view.hbase.core.persistence.Indexed;
-import org.apache.ambari.view.hbase.core.persistence.ItemNotFound;
+import org.apache.ambari.view.hbase.core.persistence.ItemNotFoundException;
 
 import java.util.List;
 
@@ -39,9 +39,9 @@ public interface Storage {
    * @param model bean class
    * @param id identifier
    * @return bean instance
-   * @throws ItemNotFound thrown if item with id was not found in DB
+   * @throws ItemNotFoundException thrown if item with id was not found in DB
    */
-  <T extends Indexed> T load(Class<T> model, Object id) throws ItemNotFound;
+  <T extends Indexed> T load(Class<T> model, Object id) throws ItemNotFoundException;
 
   /**
    * Load all objects of given bean class
@@ -65,7 +65,7 @@ public interface Storage {
    * @param model bean class
    * @param id identifier
    */
-  void delete(Class model, Object id) throws ItemNotFound;
+  void delete(Class model, Object id) throws ItemNotFoundException;
 
   /**
    * Check is object exists

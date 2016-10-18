@@ -22,7 +22,7 @@ import org.apache.ambari.view.hbase.ambari.ServiceFormattedException;
 import org.apache.ambari.view.hbase.core.IServiceFactory;
 import org.apache.ambari.view.hbase.core.PhoenixJobService;
 import org.apache.ambari.view.hbase.core.ServiceFactory;
-import org.apache.ambari.view.hbase.core.persistence.ItemNotFound;
+import org.apache.ambari.view.hbase.core.persistence.ItemNotFoundException;
 import org.apache.ambari.view.hbase.jobs.PhoenixJob;
 import org.apache.ambari.view.hbase.jobs.impl.PhoenixJobImpl;
 import org.slf4j.Logger;
@@ -83,9 +83,9 @@ public class PhoenixJobRestService {
     try {
       PhoenixJob pj = serviceFactory.getPhoenixJobService().getPhoenixJob(id);
       return Response.ok(pj).build();
-    } catch (ItemNotFound itemNotFound) {
-      LOG.error("exception : ",itemNotFound);
-      throw new ServiceFormattedException(itemNotFound);
+    } catch (ItemNotFoundException itemNotFoundException) {
+      LOG.error("exception : ", itemNotFoundException);
+      throw new ServiceFormattedException(itemNotFoundException);
     }
   }
 }

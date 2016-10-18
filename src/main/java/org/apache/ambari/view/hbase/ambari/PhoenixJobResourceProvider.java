@@ -26,7 +26,7 @@ import org.apache.ambari.view.ResourceProvider;
 import org.apache.ambari.view.SystemException;
 import org.apache.ambari.view.UnsupportedPropertyException;
 import org.apache.ambari.view.ViewContext;
-import org.apache.ambari.view.hbase.core.persistence.ItemNotFound;
+import org.apache.ambari.view.hbase.core.persistence.ItemNotFoundException;
 import org.apache.ambari.view.hbase.jobs.PhoenixJob;
 import org.apache.ambari.view.hbase.jobs.impl.PhoenixJobImpl;
 import org.slf4j.Logger;
@@ -60,7 +60,7 @@ public class PhoenixJobResourceProvider implements ResourceProvider<PhoenixJob> 
   public PhoenixJob getResource(String resourceId, Set<String> properties) throws SystemException, NoSuchResourceException, UnsupportedPropertyException {
     try {
       return getResourceManager().read(resourceId);
-    } catch (ItemNotFound itemNotFound) {
+    } catch (ItemNotFoundException itemNotFoundException) {
       throw new NoSuchResourceException(resourceId);
     }
   }
@@ -85,7 +85,7 @@ public class PhoenixJobResourceProvider implements ResourceProvider<PhoenixJob> 
     PhoenixJob item = null;
     try {
       getResourceManager().update(item, resourceId);
-    } catch (ItemNotFound itemNotFound) {
+    } catch (ItemNotFoundException itemNotFoundException) {
       throw new NoSuchResourceException(resourceId);
     }
     return true;
@@ -95,7 +95,7 @@ public class PhoenixJobResourceProvider implements ResourceProvider<PhoenixJob> 
   public boolean deleteResource(String resourceId) throws SystemException, NoSuchResourceException, UnsupportedPropertyException {
     try {
       getResourceManager().delete(resourceId);
-    } catch (ItemNotFound itemNotFound) {
+    } catch (ItemNotFoundException itemNotFoundException) {
       throw new NoSuchResourceException(resourceId);
     }
     return true;

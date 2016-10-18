@@ -23,11 +23,11 @@ import java.util.List;
 public interface IResourceManager<T extends Indexed> {
   T create(T object);
 
-  T read(Object id) throws ItemNotFound;
+  T read(Object id) throws ItemNotFoundException;
 
   List<T> readAll(FilteringStrategy filteringStrategy);
 
-  T update(T newObject, String id) throws ItemNotFound;
+  T update(T newObject, String id) throws ItemNotFoundException;
 
-  void delete(Object resourceId) throws ItemNotFound;
+  void delete(Object resourceId) throws ItemNotFoundException;
 }

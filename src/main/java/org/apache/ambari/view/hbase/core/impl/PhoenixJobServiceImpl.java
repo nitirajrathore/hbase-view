@@ -22,7 +22,7 @@ import org.apache.ambari.view.hbase.core.PhoenixJobService;
 import org.apache.ambari.view.hbase.core.persistence.FilteringStrategy;
 import org.apache.ambari.view.hbase.core.persistence.IResourceManager;
 import org.apache.ambari.view.hbase.core.persistence.Indexed;
-import org.apache.ambari.view.hbase.core.persistence.ItemNotFound;
+import org.apache.ambari.view.hbase.core.persistence.ItemNotFoundException;
 import org.apache.ambari.view.hbase.jobs.PhoenixJob;
 
 import java.util.List;
@@ -42,7 +42,7 @@ public class PhoenixJobServiceImpl implements PhoenixJobService {
   }
 
   @Override
-  public PhoenixJob getPhoenixJob(String id) throws ItemNotFound {
+  public PhoenixJob getPhoenixJob(String id) throws ItemNotFoundException {
     return phoenixJobResourceManager.read(id);
   }
 

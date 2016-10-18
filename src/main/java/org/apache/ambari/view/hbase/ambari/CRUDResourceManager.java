@@ -22,7 +22,7 @@ import org.apache.ambari.view.ViewContext;
 import org.apache.ambari.view.hbase.core.persistence.FilteringStrategy;
 import org.apache.ambari.view.hbase.core.persistence.IResourceManager;
 import org.apache.ambari.view.hbase.core.persistence.Indexed;
-import org.apache.ambari.view.hbase.core.persistence.ItemNotFound;
+import org.apache.ambari.view.hbase.core.persistence.ItemNotFoundException;
 
 import java.util.List;
 
@@ -61,11 +61,11 @@ abstract public class CRUDResourceManager<T extends Indexed> implements IResourc
    * @return model object
    */
   @Override
-  public T read(Object id) throws ItemNotFound {
+  public T read(Object id) throws ItemNotFoundException {
     T object = null;
     object = storage.load(this.resourceClass, id);
     if (!checkPermissions(object))
-      throw new ItemNotFound();
+      throw new ItemNotFoundException();
     return object;
   }
 
@@ -86,7 +86,7 @@ abstract public class CRUDResourceManager<T extends Indexed> implements IResourc
    * @return model object
    */
   @Override
-  public T update(T newObject, String id) throws ItemNotFound {
+  public T update(T newObject, String id) throws ItemNotFoundException {
     newObject.setId(id);
     this.save(newObject);
     return newObject;
@@ -97,9 +97,9 @@ abstract public class CRUDResourceManager<T extends Indexed> implements IResourc
    * @param resourceId object identifier
    */
   @Override
-  public void delete(Object resourceId) throws ItemNotFound {
+  public void delete(Object resourceId) throws ItemNotFoundException {
     if (!storage.exists(this.resourceClass, resourceId)) {
-      throw new ItemNotFound();
+      throw new ItemNotFoundException();
     }
     storage.delete(this.resourceClass, resourceId);
   }
@@ -116,8 +116,8 @@ abstract public class CRUDResourceManager<T extends Indexed> implements IResourc
   protected void cleanupAfterErrorAndThrowAgain(Indexed object, ServiceFormattedException e) {
     try {
       delete(object.getId());
-    } catch (ItemNotFound itemNotFound) {
-      throw new ServiceFormattedException("E040 Item not found", itemNotFound);
+    } catch (ItemNotFoundException itemNotFoundException) {
+      throw new ServiceFormattedException("E040 Item not found", itemNotFoundException);
     }
     throw e;
   }

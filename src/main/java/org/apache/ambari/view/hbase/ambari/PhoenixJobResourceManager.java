@@ -20,7 +20,7 @@ package org.apache.ambari.view.hbase.ambari;
 
 import org.apache.ambari.view.ViewContext;
 import org.apache.ambari.view.hbase.core.persistence.FilteringStrategy;
-import org.apache.ambari.view.hbase.core.persistence.ItemNotFound;
+import org.apache.ambari.view.hbase.core.persistence.ItemNotFoundException;
 import org.apache.ambari.view.hbase.jobs.PhoenixJob;
 import org.apache.ambari.view.hbase.jobs.impl.PhoenixJobImpl;
 import org.slf4j.Logger;
@@ -49,12 +49,12 @@ public class PhoenixJobResourceManager extends PersonalCRUDResourceManager<Phoen
   }
 
   @Override
-  public PhoenixJob read(Object id) throws ItemNotFound {
+  public PhoenixJob read(Object id) throws ItemNotFoundException {
     return super.read(id);
   }
 
   @Override
-  public PhoenixJob update(PhoenixJob newObject, String id) throws ItemNotFound {
+  public PhoenixJob update(PhoenixJob newObject, String id) throws ItemNotFoundException {
    return super.update(newObject, id);
   }
 
@@ -64,7 +64,7 @@ public class PhoenixJobResourceManager extends PersonalCRUDResourceManager<Phoen
   }
 
   @Override
-  public void delete(Object resourceId) throws ItemNotFound {
+  public void delete(Object resourceId) throws ItemNotFoundException {
     super.delete(resourceId);
   }
 }

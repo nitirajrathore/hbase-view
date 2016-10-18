@@ -22,7 +22,7 @@ import org.apache.ambari.view.PersistenceException;
 import org.apache.ambari.view.ViewContext;
 import org.apache.ambari.view.hbase.core.persistence.FilteringStrategy;
 import org.apache.ambari.view.hbase.core.persistence.Indexed;
-import org.apache.ambari.view.hbase.core.persistence.ItemNotFound;
+import org.apache.ambari.view.hbase.core.persistence.ItemNotFoundException;
 import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,14 +83,14 @@ public class DataStoreStorage implements Storage {
   }
 
   @Override
-  public synchronized <T extends Indexed> T load(Class<T> model, Object id) throws ItemNotFound {
+  public synchronized <T extends Indexed> T load(Class<T> model, Object id) throws ItemNotFoundException {
     LOG.debug(String.format("Loading %s #%s", model.getName(), id));
     try {
       T obj = context.getDataStore().find(model, id);
       if (obj != null) {
         return obj;
       } else {
-        throw new ItemNotFound();
+        throw new ItemNotFoundException();
       }
     } catch (PersistenceException e) {
       throw new ServiceFormattedException("S040 Data storage error", e);
@@ -117,7 +117,7 @@ public class DataStoreStorage implements Storage {
   }
 
   @Override
-  public synchronized void delete(Class model, Object id) throws ItemNotFound {
+  public synchronized void delete(Class model, Object id) throws ItemNotFoundException {
     LOG.debug(String.format("Deleting %s:%s", model.getName(), id));
     Object obj = load(model, id);
     try {

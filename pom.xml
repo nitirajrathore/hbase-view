@@ -28,13 +28,13 @@
     <!-- akka dependencies -->
     <dependency>
       <groupId>com.typesafe.akka</groupId>
-      <artifactId>akka-actor</artifactId>
-      <version>2.0</version>
+      <artifactId>akka-actor_2.11</artifactId>
+      <version>2.3.15</version>
     </dependency>
     <dependency>
       <groupId>com.typesafe.akka</groupId>
-      <artifactId>akka-testkit</artifactId>
-      <version>2.0</version>
+      <artifactId>akka-testkit_2.11</artifactId>
+      <version>2.3.15</version>
       <scope>test</scope>
     </dependency>
 
