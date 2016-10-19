@@ -16,17 +16,7 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.core;
+package org.apache.ambari.view.hbase.core.configs;
 
-import org.apache.ambari.view.hbase.core.persistence.ItemNotFoundException;
-import org.apache.ambari.view.hbase.jobs.PhoenixJob;
-
-import java.util.List;
-
-public interface PhoenixJobService {
-  public String submitPhoenixJob(PhoenixJob job);
-
-  public PhoenixJob getPhoenixJob(String id) throws ItemNotFoundException;
-
-  public List<PhoenixJob> getPhoenixJobs();
+public class PersistenceConfig {
 }

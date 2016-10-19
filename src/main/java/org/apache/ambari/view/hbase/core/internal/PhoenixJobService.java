@@ -16,7 +16,24 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.core;
+package org.apache.ambari.view.hbase.core.internal;
 
-public class AmbariConfig {
+import com.google.common.base.Optional;
+import org.apache.ambari.view.hbase.core.PhoenixException;
+import org.apache.ambari.view.hbase.core.service.JobNotFoundException;
+import org.apache.ambari.view.hbase.core.service.ServiceException;
+import org.apache.ambari.view.hbase.jobs.PhoenixJob;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.util.List;
+
+public interface PhoenixJobService {
+  String submitPhoenixJob(PhoenixJob job) throws ServiceException;
+
+  PhoenixJob getPhoenixJob(String id) throws JobNotFoundException, ServiceException;
+
+  List<PhoenixJob> getPhoenixJobs() throws ServiceException;
+
+  Optional<ResultSet> submitSyncJob(Connection connection, PhoenixJob job) throws ServiceException, PhoenixException;
 }

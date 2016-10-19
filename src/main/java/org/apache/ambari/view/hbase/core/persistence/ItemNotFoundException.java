@@ -21,7 +21,7 @@ package org.apache.ambari.view.hbase.core.persistence;
 /**
  * Thrown when item was not found in DB
  */
-public class ItemNotFoundException extends Exception {
+public class ItemNotFoundException extends PersistenceException{
   public ItemNotFoundException() {
   }
 

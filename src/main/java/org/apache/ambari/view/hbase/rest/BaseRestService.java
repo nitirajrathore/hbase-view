@@ -16,28 +16,30 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.ambari;
+package org.apache.ambari.view.hbase.rest;
 
+import com.google.inject.Inject;
 import org.apache.ambari.view.ViewContext;
+import org.apache.ambari.view.hbase.core.ViewException;
 import org.apache.ambari.view.hbase.core.service.IServiceFactory;
 import org.apache.ambari.view.hbase.core.service.JobService;
-import org.apache.ambari.view.hbase.core.service.ViewServiceFactory;
+import org.apache.ambari.view.hbase.core.service.ServiceFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class AmbariServiceFactory implements IServiceFactory {
+public class BaseRestService {
+  private final static Logger LOG =
+    LoggerFactory.getLogger(BaseRestService.class);
 
-  private final AmbariConfigurator configurator;
-  private final AmbariStorage storage;
-  private ViewContext viewContext = null;
-  private JobService jobService;
-  public AmbariServiceFactory(ViewContext viewContext){
-    this.viewContext = viewContext;
-    this.configurator = new AmbariConfigurator(viewContext);
-    this.storage = new AmbariStorage(viewContext);
-    this.jobService = new JobService(new ViewServiceFactory(configurator, storage));
+  @Inject
+  protected ViewContext viewContext;
+
+  protected IServiceFactory getServerFactory() throws ViewException {
+    LOG.info("getPhoenixJobs Getting serviceFactory..  ");
+    return new ServiceFactory(viewContext).getInstance();
   }
 
-  @Override
-  public JobService getJobService() {
-    return jobService;
+  protected JobService getJobService() throws ViewException {
+    return getServerFactory().getJobService();
   }
 }

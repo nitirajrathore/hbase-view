@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,11 +16,7 @@
  * limitations under the License.
  */
 
-package org.apache.ambari.view.hbase.ambari;
-
-import org.apache.ambari.view.hbase.core.persistence.FilteringStrategy;
-import org.apache.ambari.view.hbase.core.persistence.Indexed;
-import org.apache.ambari.view.hbase.core.persistence.ItemNotFoundException;
+package org.apache.ambari.view.hbase.core.persistence;
 
 import java.util.List;
 
@@ -32,46 +28,45 @@ public interface Storage {
    * Persist object to DB. It should be Indexed
    * @param obj object to save
    */
-  <T extends Indexed> void store(Class<T> model, Indexed obj);
+  <T extends PersistentResource> T create(Class<? extends T> klass, T obj) throws PersistenceException;
+
+  /**
+   * Persist object to DB. It should be Indexed
+   * @param obj object to save
+   */
+  <T extends PersistentResource> T update(Class<? extends T> klass, T obj) throws PersistenceException;
 
   /**
    * Load object
-   * @param model bean class
    * @param id identifier
    * @return bean instance
    * @throws ItemNotFoundException thrown if item with id was not found in DB
    */
-  <T extends Indexed> T load(Class<T> model, Object id) throws ItemNotFoundException;
+  <T extends PersistentResource> T read(Class<? extends T> klass, Object id) throws PersistenceException;
 
   /**
    * Load all objects of given bean class
-   * @param model bean class
    * @param filter filtering strategy (return only those objects that conform condition)
-   * @param <T> bean class
    * @return list of filtered objects
    */
-  <T extends Indexed> List<T> loadAll(Class<? extends T> model, FilteringStrategy filter);
+  <T extends PersistentResource> List<T> readAll(Class<? extends T> klass, FilteringStrategy filter) throws PersistenceException;
 
   /**
    * Load all objects of given bean class
-   * @param model bean class
-   * @param <T> bean class
    * @return list of all objects
    */
-  <T extends Indexed> List<T> loadAll(Class<T> model);
+  <T extends PersistentResource> List<T> readAll(Class<? extends T> klass) throws PersistenceException;
 
   /**
    * Delete object
-   * @param model bean class
    * @param id identifier
    */
-  void delete(Class model, Object id) throws ItemNotFoundException;
+  <T extends PersistentResource> void delete(Class<? extends T> klass, Object id) throws ItemNotFoundException, PersistenceException;
 
   /**
    * Check is object exists
-   * @param model bean class
    * @param id identifier
    * @return true if exists
    */
-  boolean exists(Class model, Object id);
+  <T extends PersistentResource> boolean exists(Class<? extends T> klass, Object id) throws PersistenceException;
 }

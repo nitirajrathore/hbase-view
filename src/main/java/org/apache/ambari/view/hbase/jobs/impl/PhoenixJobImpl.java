@@ -49,16 +49,15 @@ package org.apache.ambari.view.hbase.jobs.impl;
 //}
 
 
-import org.apache.ambari.view.hbase.core.persistence.Overridable;
 import org.apache.ambari.view.hbase.jobs.Job;
 import org.apache.ambari.view.hbase.jobs.PhoenixJob;
 
 import java.util.Date;
 
-public class PhoenixJobImpl implements PhoenixJob, Job, Overridable<PhoenixJob> {
+public class PhoenixJobImpl implements PhoenixJob, Job {
   private String query;
   private String id;
-  private String owner;
+//  private String owner;
   private Long duration;
   private Date submittedDate;
 
@@ -85,13 +84,13 @@ public class PhoenixJobImpl implements PhoenixJob, Job, Overridable<PhoenixJob> 
 //  public void setId(Long id) {
 //  }
 
-  public String getOwner() {
-    return owner;
-  }
-
-  public void setOwner(String owner) {
-    this.owner = owner;
-  }
+//  public String getOwner() {
+//    return owner;
+//  }
+//
+//  public void setOwner(String owner) {
+//    this.owner = owner;
+//  }
 
   public Long getDuration() {
     return duration;
@@ -109,18 +108,25 @@ public class PhoenixJobImpl implements PhoenixJob, Job, Overridable<PhoenixJob> 
     this.submittedDate = submittedDate;
   }
 
-  @Override
   public void override(PhoenixJob phoenixJob) {
     if (null != phoenixJob.getDuration())
       this.duration = phoenixJob.getDuration();
 
-    if (null != phoenixJob.getOwner())
-      this.owner = phoenixJob.getOwner();
+//    if (null != phoenixJob.getOwner())
+//      this.owner = phoenixJob.getOwner();
 
     if (null != phoenixJob.getQuery())
       this.query = phoenixJob.getQuery();
 
     if (null != phoenixJob.getSubmittedDate())
       this.submittedDate = phoenixJob.getSubmittedDate();
+  }
+
+  @Override
+  public void override(Object o) {
+    if( o instanceof PhoenixJob){
+      this.override((PhoenixJob)o);
+    }else
+      throw new IllegalArgumentException("Incompatible object types.");
   }
 }

@@ -16,16 +16,20 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.jobs;
+package org.apache.ambari.view.hbase.core.configs;
 
-import org.apache.ambari.view.hbase.core.persistence.PersistentResource;
+import java.util.Map;
 
-import java.util.Date;
+public class PhoenixConfig {
+  private static final String PHOENIX_URL = "phoenix.connection.url";
 
-public interface Job extends PersistentResource {
-  public Date getSubmittedDate();
+  private final Map<String, String> properties;
 
-//  public JobType getType();
+  public PhoenixConfig(Map<String, String> properties) {
+    this.properties = properties;
+  }
 
-  public Long getDuration();
+  public String getUrl() {
+    return this.properties.get(PHOENIX_URL);
+  }
 }

@@ -18,49 +18,41 @@
 
 package org.apache.ambari.view.hbase.jobs.impl;
 
-import org.apache.ambari.view.hbase.jobs.Job;
+public class TableJob extends PhoenixJobImpl {
+  private String catalog;
+  private String schemaPattern;
+  private String tableNamePattern;
 
-import java.util.Date;
-
-public abstract class JobImpl implements Job {
-  public String id;
-  private Date submittedDate;
-  private Long duration;
-  private String owner;
-
-  @Override
-  public String getId() {
-    return id;
+  public TableJob() {
   }
 
-  @Override
-  public void setId(String id) {
-    this.id = id;
+  public TableJob(String catalog, String schemaPattern, String tableNamePattern) {
+    this.catalog = catalog;
+    this.schemaPattern = schemaPattern;
+    this.tableNamePattern = tableNamePattern;
   }
 
-  @Override
-  public Date getSubmittedDate() {
-    return submittedDate;
+  public String getCatalog() {
+    return catalog;
   }
 
-  @Override
-  public Long getDuration() {
-    return duration;
+  public void setCatalog(String catalog) {
+    this.catalog = catalog;
   }
 
-  public String getOwner() {
-    return owner;
+  public String getSchemaPattern() {
+    return schemaPattern;
   }
 
-  public void setOwner(String owner) {
-    this.owner = owner;
+  public void setSchemaPattern(String schemaPattern) {
+    this.schemaPattern = schemaPattern;
   }
 
-  public void setSubmittedDate(Date submittedDate) {
-    this.submittedDate = submittedDate;
+  public String getTableNamePattern() {
+    return tableNamePattern;
   }
 
-  public void setDuration(Long duration) {
-    this.duration = duration;
+  public void setTableNamePattern(String tableNamePattern) {
+    this.tableNamePattern = tableNamePattern;
   }
 }

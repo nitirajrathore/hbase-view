@@ -16,16 +16,7 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.core;
+package org.apache.ambari.view.hbase.core.configs;
 
-public interface IServiceFactory {
-  public DatabaseConfig getDatabaseConfig();
-
-  public PhoenixConfig getPhoenixConfig();
-
-  public HbaseConfig getHbaseConfig();
-
-  public AmbariConfig getAmbariConfig();
-
-  public PhoenixJobService getPhoenixJobService();
+public class HbaseConfig {
 }

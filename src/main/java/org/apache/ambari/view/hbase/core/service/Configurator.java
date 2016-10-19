@@ -16,16 +16,20 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.jobs;
+package org.apache.ambari.view.hbase.core.service;
 
-import org.apache.ambari.view.hbase.core.persistence.PersistentResource;
+import org.apache.ambari.view.hbase.core.configs.PhoenixConfig;
 
-import java.util.Date;
+public interface Configurator {
+//  PhoenixConfig getPhoenixConfig();
+//
+//  PersistenceConfig getPersistenceConfig();
+//
+//  HbaseConfig getHbaseConfig();
+//
+//  AmbariConfig getAmbariConfig();
 
-public interface Job extends PersistentResource {
-  public Date getSubmittedDate();
+  String getProperty(String propertyName);
 
-//  public JobType getType();
-
-  public Long getDuration();
+  PhoenixConfig getPhoenixConfig();
 }

@@ -16,28 +16,30 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.ambari;
+package org.apache.ambari.view.hbase.core.service.impl;
 
-import org.apache.ambari.view.ViewContext;
+import org.apache.ambari.view.hbase.core.persistence.DatabaseServiceFactory;
+import org.apache.ambari.view.hbase.core.service.Configurator;
 import org.apache.ambari.view.hbase.core.service.IServiceFactory;
 import org.apache.ambari.view.hbase.core.service.JobService;
 import org.apache.ambari.view.hbase.core.service.ViewServiceFactory;
 
-public class AmbariServiceFactory implements IServiceFactory {
+import java.util.Properties;
 
-  private final AmbariConfigurator configurator;
-  private final AmbariStorage storage;
-  private ViewContext viewContext = null;
+public class StandAloneServiceFactory implements IServiceFactory {
+  private Configurator configurator;
+  private Properties viewProperties;
   private JobService jobService;
-  public AmbariServiceFactory(ViewContext viewContext){
-    this.viewContext = viewContext;
-    this.configurator = new AmbariConfigurator(viewContext);
-    this.storage = new AmbariStorage(viewContext);
-    this.jobService = new JobService(new ViewServiceFactory(configurator, storage));
+  DatabaseServiceFactory dsf = DatabaseServiceFactory.getInstance();
+  public StandAloneServiceFactory(Properties viewProperties){
+    this.viewProperties = viewProperties;
+    configurator = new ConfiguratorImpl(viewProperties);
+    jobService = new JobService(new ViewServiceFactory(configurator, new StorageImpl(dsf.getEntityManagerFactory())));
   }
 
   @Override
   public JobService getJobService() {
     return jobService;
   }
+
 }

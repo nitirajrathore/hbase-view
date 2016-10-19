@@ -24,6 +24,25 @@
   </properties>
 
   <dependencies>
+    <!--phoenix driver-->
+    <!--<dependency>-->
+      <!--<groupId>org.apache.phoenix</groupId>-->
+      <!--<artifactId>phoenix</artifactId>-->
+      <!--<version>4.4.0-HBase-1.1</version>-->
+      <!--<type>pom</type>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+      <!--<groupId>org.apache.phoenix</groupId>-->
+      <!--<artifactId>phoenix-core</artifactId>-->
+      <!--<version>4.4.0-HBase-1.1</version>-->
+    <!--</dependency>-->
+    <!-- https://mvnrepository.com/artifact/org.apache.phoenix/phoenix-server-client -->
+    <!--org.apache.phoenix:phoenix-server-client:4.7.0-HBase-1.1-->
+    <dependency>
+      <groupId>org.apache.phoenix</groupId>
+      <artifactId>phoenix-server-client</artifactId>
+      <version>4.7.0-HBase-1.1</version>
+    </dependency>
 
     <!-- akka dependencies -->
     <dependency>
@@ -131,6 +150,11 @@
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
       <version>3.0.1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>19.0</version>
     </dependency>
 
   </dependencies>

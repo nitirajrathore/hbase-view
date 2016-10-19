@@ -16,16 +16,7 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.jobs;
+package org.apache.ambari.view.hbase.core.service;
 
-import org.apache.ambari.view.hbase.core.persistence.PersistentResource;
-
-import java.util.Date;
-
-public interface Job extends PersistentResource {
-  public Date getSubmittedDate();
-
-//  public JobType getType();
-
-  public Long getDuration();
+public class JobNotFoundException extends Exception {
 }

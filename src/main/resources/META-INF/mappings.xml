@@ -15,7 +15,6 @@
       <basic name="query"></basic>
       <basic name="submittedDate"></basic>
       <basic name="duration"></basic>
-      <basic name="owner"></basic>
     </attributes>
   </entity>
 

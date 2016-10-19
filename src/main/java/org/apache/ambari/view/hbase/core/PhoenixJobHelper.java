@@ -16,16 +16,25 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.jobs;
+package org.apache.ambari.view.hbase.core;
 
-import org.apache.ambari.view.hbase.core.persistence.PersistentResource;
+import com.google.common.base.Optional;
+import org.apache.ambari.view.hbase.jobs.impl.TableJob;
 
-import java.util.Date;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-public interface Job extends PersistentResource {
-  public Date getSubmittedDate();
+public class PhoenixJobHelper {
+  private static final String TABLES = "TABLE";
 
-//  public JobType getType();
-
-  public Long getDuration();
+  public Optional<ResultSet> getTables(Connection connection, TableJob tableJob) throws PhoenixException {
+    try {
+      ResultSet rs = connection.getMetaData().getTables(tableJob.getCatalog(), tableJob.getSchemaPattern(),
+        tableJob.getTableNamePattern(), new String[]{TABLES});
+      return Optional.fromNullable(rs);
+    } catch (SQLException e) {
+      throw new PhoenixException(e);
+    }
+  }
 }

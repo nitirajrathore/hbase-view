@@ -49,7 +49,7 @@
 
     <resource>
         <name>servicefactory</name>
-        <service-class>org.apache.ambari.view.hbase.core.ServiceFactory</service-class>
+        <service-class>org.apache.ambari.view.hbase.core.service.ServiceFactory</service-class>
     </resource>
 
     <persistence>

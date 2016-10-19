@@ -16,16 +16,31 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.jobs;
+package org.apache.ambari.view.hbase.core;
 
-import org.apache.ambari.view.hbase.core.persistence.PersistentResource;
+import java.sql.SQLException;
 
-import java.util.Date;
+public class PhoenixException extends Exception {
+  public PhoenixException(SQLException e) {
+    this((Throwable)e);
+  }
 
-public interface Job extends PersistentResource {
-  public Date getSubmittedDate();
+  public PhoenixException() {
+  }
 
-//  public JobType getType();
+  public PhoenixException(String message) {
+    super(message);
+  }
 
-  public Long getDuration();
+  public PhoenixException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
+  public PhoenixException(Throwable cause) {
+    super(cause);
+  }
+
+  public PhoenixException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    super(message, cause, enableSuppression, writableStackTrace);
+  }
 }

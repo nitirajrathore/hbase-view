@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,11 +27,15 @@ import org.apache.ambari.view.SystemException;
 import org.apache.ambari.view.UnsupportedPropertyException;
 import org.apache.ambari.view.ViewContext;
 import org.apache.ambari.view.hbase.core.persistence.ItemNotFoundException;
+import org.apache.ambari.view.hbase.core.persistence.PersistenceException;
+import org.apache.ambari.view.hbase.core.persistence.ResourceManager;
 import org.apache.ambari.view.hbase.jobs.PhoenixJob;
 import org.apache.ambari.view.hbase.jobs.impl.PhoenixJobImpl;
+import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -40,53 +44,70 @@ import java.util.Set;
  * Resource provider for PhoenixJob
  */
 public class PhoenixJobResourceProvider implements ResourceProvider<PhoenixJob> {
+  protected final static Logger LOG =
+    LoggerFactory.getLogger(PhoenixJobResourceProvider.class);
+
   @Inject
   ViewContext context;
 
-  protected final static Logger LOG =
-      LoggerFactory.getLogger(PhoenixJobResourceProvider.class);
-  private PhoenixJobResourceManager phoenixJobResourceManager;
+  private ResourceManager<PhoenixJobImpl> persistentResourceManager;
 
-  protected PhoenixJobResourceManager getResourceManager() {
-    if( null == phoenixJobResourceManager){
-      synchronized (this){
-        phoenixJobResourceManager = new PhoenixJobResourceManager(this.context);
+  protected ResourceManager<PhoenixJobImpl> getResourceManager() {
+    if (null == persistentResourceManager) {
+      synchronized (this) {
+        if(null == persistentResourceManager)
+          persistentResourceManager = new ResourceManager<>(PhoenixJobImpl.class, new AmbariStorage(new SafeViewContext(this.context)));
       }
     }
-    return this.phoenixJobResourceManager;
+    return this.persistentResourceManager;
   }
 
   @Override
-  public PhoenixJob getResource(String resourceId, Set<String> properties) throws SystemException, NoSuchResourceException, UnsupportedPropertyException {
+  public PhoenixJob getResource(String resourceId, Set<String> properties) throws NoSuchResourceException {
     try {
       return getResourceManager().read(resourceId);
-    } catch (ItemNotFoundException itemNotFoundException) {
+    } catch (PersistenceException e) {
+      LOG.error("Exception occurred while getting Phoenix Job with id {}", resourceId, e);
       throw new NoSuchResourceException(resourceId);
     }
   }
 
   @Override
-  public Set<PhoenixJob> getResources(ReadRequest readRequest) throws SystemException, NoSuchResourceException, UnsupportedPropertyException {
-    if (context == null) {
-      return new HashSet<PhoenixJob>();
+  public Set<PhoenixJob> getResources(ReadRequest readRequest) throws NoSuchResourceException {
+    try {
+      return new HashSet<PhoenixJob>(getResourceManager().readAll(null));
+    } catch (PersistenceException e) {
+      throw new NoSuchResourceException("Error while reading all resources.");
     }
-    return new HashSet<PhoenixJob>(getResourceManager().readAll(
-        new OnlyOwnersFilteringStrategy(this.context.getUsername())));
   }
 
   @Override
   public void createResource(String s, Map<String, Object> stringObjectMap) throws SystemException, ResourceAlreadyExistsException, NoSuchResourceException, UnsupportedPropertyException {
-    PhoenixJob item = new PhoenixJobImpl();
-    getResourceManager().create(item);
+    PhoenixJobImpl item = new PhoenixJobImpl();
+    try {
+      BeanUtils.populate(item, stringObjectMap);
+      getResourceManager().create(item);
+    } catch (IllegalAccessException | InvocationTargetException e) {
+      throw new UnsupportedPropertyException(PhoenixJobImpl.class.toString(),stringObjectMap.keySet());
+    } catch (PersistenceException e) {
+      throw new SystemException(e.getMessage(), e);
+    }
   }
 
   @Override
   public boolean updateResource(String resourceId, Map<String, Object> stringObjectMap) throws SystemException, NoSuchResourceException, UnsupportedPropertyException {
-    PhoenixJob item = null;
+    PhoenixJobImpl item = new PhoenixJobImpl();
+
     try {
-      getResourceManager().update(item, resourceId);
+      BeanUtils.populate(item, stringObjectMap);
+      item.setId(resourceId);
+      getResourceManager().update(item);
     } catch (ItemNotFoundException itemNotFoundException) {
       throw new NoSuchResourceException(resourceId);
+    } catch (InvocationTargetException | IllegalAccessException e) {
+      throw new UnsupportedPropertyException(e.getMessage(), stringObjectMap.keySet());
+    } catch (PersistenceException e) {
+      throw new SystemException(e.getMessage(), e);
     }
     return true;
   }
@@ -97,6 +118,8 @@ public class PhoenixJobResourceProvider implements ResourceProvider<PhoenixJob> 
       getResourceManager().delete(resourceId);
     } catch (ItemNotFoundException itemNotFoundException) {
       throw new NoSuchResourceException(resourceId);
+    } catch (PersistenceException e) {
+      throw new SystemException(e.getMessage(), e);
     }
     return true;
   }

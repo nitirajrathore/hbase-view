@@ -20,14 +20,16 @@ package org.apache.ambari.view.hbase.core.persistence;
 
 import java.util.List;
 
-public interface IResourceManager<T extends Indexed> {
-  T create(T object);
+public interface PersistenceManager<T extends Indexed> {
+  T create(T object) throws PersistenceException;
 
-  T read(Object id) throws ItemNotFoundException;
+  T read(Object id) throws PersistenceException;
 
-  List<T> readAll(FilteringStrategy filteringStrategy);
+  List<T> readAll(FilteringStrategy filteringStrategy) throws PersistenceException;
 
-  T update(T newObject, String id) throws ItemNotFoundException;
+  List<T> readAll() throws PersistenceException;
 
-  void delete(Object resourceId) throws ItemNotFoundException;
+  T update(T newObject) throws ItemNotFoundException, PersistenceException;
+
+  void delete(Object resourceId) throws PersistenceException;
 }

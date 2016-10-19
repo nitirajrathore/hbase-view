@@ -16,7 +16,7 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.core;
+package org.apache.ambari.view.hbase.core.configs;
 
-public class PhoenixConfig {
+public class AmbariConfig {
 }

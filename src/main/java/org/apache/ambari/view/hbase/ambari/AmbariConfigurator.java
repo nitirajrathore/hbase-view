@@ -19,25 +19,26 @@
 package org.apache.ambari.view.hbase.ambari;
 
 import org.apache.ambari.view.ViewContext;
-import org.apache.ambari.view.hbase.core.service.IServiceFactory;
-import org.apache.ambari.view.hbase.core.service.JobService;
-import org.apache.ambari.view.hbase.core.service.ViewServiceFactory;
+import org.apache.ambari.view.hbase.core.configs.PhoenixConfig;
+import org.apache.ambari.view.hbase.core.service.Configurator;
 
-public class AmbariServiceFactory implements IServiceFactory {
+public class AmbariConfigurator implements Configurator {
 
-  private final AmbariConfigurator configurator;
-  private final AmbariStorage storage;
-  private ViewContext viewContext = null;
-  private JobService jobService;
-  public AmbariServiceFactory(ViewContext viewContext){
+  private final ViewContext viewContext;
+  private final PhoenixConfig phoenixConfig;
+
+  public AmbariConfigurator(ViewContext viewContext){
     this.viewContext = viewContext;
-    this.configurator = new AmbariConfigurator(viewContext);
-    this.storage = new AmbariStorage(viewContext);
-    this.jobService = new JobService(new ViewServiceFactory(configurator, storage));
+    phoenixConfig = new PhoenixConfig(viewContext.getProperties());
   }
 
   @Override
-  public JobService getJobService() {
-    return jobService;
+  public String getProperty(String propertyName) {
+    return viewContext.getProperties().get(propertyName);
+  }
+
+  @Override
+  public PhoenixConfig getPhoenixConfig() {
+    return phoenixConfig;
   }
 }

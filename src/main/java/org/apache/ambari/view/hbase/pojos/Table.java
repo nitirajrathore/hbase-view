@@ -16,7 +16,8 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.core;
+package org.apache.ambari.view.hbase.pojos;
 
-public class DatabaseConfig {
+public class Table {
+
 }
