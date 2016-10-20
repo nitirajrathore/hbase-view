@@ -30,10 +30,10 @@
 
     <!-- Hive Configs -->
     <parameter>
-      <name>hbase.jdbc.url</name>
-      <description>Enter JDBC Url to connect to Hive Server 2</description>
-      <label>HiveServer2 JDBC Url</label>
-      <placeholder>jdbc:hive2://127.0.0.1:10000</placeholder>
+      <name>phoenix.connection.url</name>
+      <description>Enter JDBC Url to connect to Phoenix Server</description>
+      <label>Phoenix JDBC Url</label>
+      <placeholder>jdbc:phoenix:thin:url=http://c6401.ambari.apache.org:8765;serialization=PROTOBUF</placeholder>
       <cluster-config>fake</cluster-config>
       <required>true</required>
     </parameter>
@@ -48,8 +48,13 @@
     </resource>
 
     <resource>
-        <name>servicefactory</name>
-        <service-class>org.apache.ambari.view.hbase.core.service.ServiceFactory</service-class>
+        <name>BaseRestService</name>
+        <service-class>org.apache.ambari.view.hbase.rest.BaseRestService</service-class>
+    </resource>
+
+    <resource>
+        <name>tables</name>
+        <service-class>org.apache.ambari.view.hbase.rest.DDLRestService</service-class>
     </resource>
 
     <persistence>
