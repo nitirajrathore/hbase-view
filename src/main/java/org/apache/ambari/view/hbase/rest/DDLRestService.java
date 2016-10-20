@@ -46,7 +46,8 @@ public class DDLRestService extends BaseRestService{
   @GET
   public List<Table> getAllTables(){
     try {
-      return getJobService().getTables(new TableJob(null, null, null));
+//      return getJobService().getTables(new TableJob(null, null, null));
+      return getJobService().getTablesActor(new TableJob(null,null,null));
     } catch (ServiceException | ViewException | PhoenixException e) {
       LOG.error("Error while getting tables.", e);
       throw new WebApplicationException(e);

@@ -18,6 +18,7 @@
 
 package org.apache.ambari.view.hbase.core.service.impl;
 
+import org.apache.ambari.view.hbase.core.internal.ViewActorSystem;
 import org.apache.ambari.view.hbase.core.persistence.DatabaseServiceFactory;
 import org.apache.ambari.view.hbase.core.service.Configurator;
 import org.apache.ambari.view.hbase.core.service.IServiceFactory;
@@ -34,7 +35,7 @@ public class StandAloneServiceFactory implements IServiceFactory {
   public StandAloneServiceFactory(Properties viewProperties){
     this.viewProperties = viewProperties;
     configurator = new ConfiguratorImpl(viewProperties);
-    jobService = new JobService(new ViewServiceFactory(configurator, new StorageImpl(dsf.getEntityManagerFactory())));
+    jobService = new JobService(new ViewServiceFactory(configurator, new StorageImpl(dsf.getEntityManagerFactory()), ViewActorSystem.get()));
   }
 
   @Override

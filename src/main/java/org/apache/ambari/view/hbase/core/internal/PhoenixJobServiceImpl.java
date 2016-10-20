@@ -18,6 +18,7 @@
 
 package org.apache.ambari.view.hbase.core.internal;
 
+import akka.actor.ActorSystem;
 import com.google.common.base.Optional;
 import org.apache.ambari.view.hbase.core.PhoenixException;
 import org.apache.ambari.view.hbase.core.PhoenixJobHelper;
@@ -35,11 +36,13 @@ import java.util.List;
 public class PhoenixJobServiceImpl implements PhoenixJobService {
 
   private final Configurator configurator;
+  private final ActorSystem actorSystem;
   private ResourceManager<PhoenixJob> phoenixJobResourceManager;
 
-  public PhoenixJobServiceImpl(Configurator configurator, ResourceManager<PhoenixJob> resourceManager){
+  public PhoenixJobServiceImpl(Configurator configurator, ResourceManager<PhoenixJob> resourceManager, ActorSystem actorSystem){
     this.configurator = configurator;
     this.phoenixJobResourceManager = resourceManager;
+    this.actorSystem = actorSystem;
   }
 
   @Override
