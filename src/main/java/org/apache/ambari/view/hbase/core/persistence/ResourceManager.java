@@ -48,7 +48,6 @@ public class ResourceManager<T extends PersistentResource> implements Persistenc
   @Override
   public T create(T object) throws PersistenceException {
     object.setId(null);
-    object.prepareForPersisting();
     return storage.create(resourceClass, object);
   }
 
@@ -84,7 +83,6 @@ public class ResourceManager<T extends PersistentResource> implements Persistenc
    */
   @Override
   public T update(T newObject) throws PersistenceException {
-    newObject.prepareForPersisting();
     return storage.update(this.resourceClass, newObject);
   }
 

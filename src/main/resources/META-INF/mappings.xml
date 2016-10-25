@@ -6,10 +6,8 @@
 
   <description>XML Mapping file</description>
   <package>org.apache.ambari.view.hbase.jobs</package>
-  <entity class="org.apache.ambari.view.hbase.jobs.PersistablePhoenixJob">
+  <entity class="org.apache.ambari.view.hbase.jobs.PhoenixJob">
     <table name="phoenix_jobs"/>
-    <inheritance strategy="SINGLE_TABLE"/>
-    <discriminator-column name="Job_Type"/>
     <attributes>
       <id name="id">
         <generated-value strategy="TABLE"/>
@@ -20,12 +18,7 @@
       <basic name="submittedDate"></basic>
       <basic name="duration"></basic>
       <basic name="owner"></basic>
+      <basic name="jobType"></basic>
     </attributes>
-  </entity>
-  <entity class="org.apache.ambari.view.hbase.jobs.impl.CreateTableJob">
-    <discriminator-value>CreateTableJob</discriminator-value>
-  </entity>
-  <entity class="org.apache.ambari.view.hbase.jobs.impl.AlterTableJob">
-    <discriminator-value>AlterTableJob</discriminator-value>
   </entity>
 </entity-mappings>

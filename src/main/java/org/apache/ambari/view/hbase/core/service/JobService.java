@@ -25,8 +25,9 @@ import org.apache.ambari.view.hbase.actors.PhoenixJobActor;
 import org.apache.ambari.view.hbase.core.PhoenixException;
 import org.apache.ambari.view.hbase.core.ViewException;
 import org.apache.ambari.view.hbase.core.persistence.PersistenceException;
+import org.apache.ambari.view.hbase.jobs.IPhoenixJob;
 import org.apache.ambari.view.hbase.jobs.Job;
-import org.apache.ambari.view.hbase.jobs.PersistablePhoenixJob;
+import org.apache.ambari.view.hbase.jobs.JobInfo;
 import org.apache.ambari.view.hbase.jobs.PhoenixJob;
 import org.apache.ambari.view.hbase.jobs.impl.CreateTableJob;
 import org.apache.ambari.view.hbase.jobs.impl.GetTablesJob;
@@ -56,15 +57,15 @@ public class JobService {
     this.factory = factory;
   }
 
-//  public String submitJob(Job job) throws ServiceException {
-//    if (job instanceof PhoenixJob)
-//      return factory.getPhoenixService().submitPhoenixJob((PhoenixJob) job);
+//  public String submitJob(JobInfo job) throws ServiceException {
+//    if (job instanceof IPhoenixJob)
+//      return factory.getPhoenixService().submitPhoenixJob((IPhoenixJob) job);
 //    else throw new ServiceException("Illegal Argument");
 //  }
 
   public String submitJob(Job job) throws ServiceException {
-    if (job instanceof PhoenixJob)
-      return factory.getPhoenixService().submitPhoenixJob((PhoenixJob) job);
+    if (job instanceof IPhoenixJob)
+      return factory.getPhoenixService().submitPhoenixJob(job);
     else throw new ServiceException("Illegal Argument");
   }
 
@@ -163,13 +164,13 @@ public class JobService {
     return new ArrayList<Table>();
   }
 
-  public Job getJob(String id) throws JobNotFoundException, ServiceException {
+  public JobInfo getJob(String id) throws JobNotFoundException, ServiceException {
     return null;
   }
 
-  public List<Job> getJobs() throws ServiceException, PersistenceException {
-    List<PersistablePhoenixJob> jobs = this.factory.getPhoenixResourceManager().readAll();
-    return new ArrayList<Job>(jobs);
+  public List<JobInfo> getJobs() throws ServiceException, PersistenceException {
+    List<PhoenixJob> jobs = this.factory.getPhoenixResourceManager().readAll();
+    return new ArrayList<JobInfo>(jobs);
   }
 
 }

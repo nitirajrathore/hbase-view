@@ -21,5 +21,4 @@ package org.apache.ambari.view.hbase.core.persistence;
 import java.io.Serializable;
 
 public interface PersistentResource extends Indexed, Overridable, Serializable {
-  void prepareForPersisting();
 }

@@ -29,8 +29,8 @@ import org.apache.ambari.view.hbase.core.persistence.PersistenceException;
 import org.apache.ambari.view.hbase.core.service.PhoenixConnectionManager;
 import org.apache.ambari.view.hbase.core.service.ServiceException;
 import org.apache.ambari.view.hbase.core.service.ViewServiceFactory;
-import org.apache.ambari.view.hbase.jobs.PersistablePhoenixJob;
-import org.apache.ambari.view.hbase.jobs.PhoenixJob;
+import org.apache.ambari.view.hbase.jobs.IPhoenixJob;
+import org.apache.ambari.view.hbase.jobs.Job;
 import org.apache.ambari.view.hbase.jobs.impl.GetTablesJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,9 +56,9 @@ public class PhoenixJobServiceImpl implements PhoenixJobService {
   }
 
   @Override
-  public String submitPhoenixJob(PhoenixJob job) throws ServiceException {
+  public String submitPhoenixJob(Job job) throws ServiceException {
     try {
-      if (job instanceof PersistablePhoenixJob) {
+      if (job instanceof IPhoenixJob) {
         try (
           Connection connection = PhoenixConnectionManager.getInstance()
             .getConnection(this.factory.getConfigurator().getPhoenixConfig())
@@ -81,7 +81,7 @@ public class PhoenixJobServiceImpl implements PhoenixJobService {
   }
 
   @Override
-  public PhoenixJob getPhoenixJob(String id) throws ServiceException {
+  public IPhoenixJob getPhoenixJob(String id) throws ServiceException {
     try {
       return this.factory.getPhoenixResourceManager().read(id);
     } catch (PersistenceException e) {
@@ -90,7 +90,7 @@ public class PhoenixJobServiceImpl implements PhoenixJobService {
   }
 
   @Override
-  public List<PhoenixJob> getPhoenixJobs() throws ServiceException {
+  public List<IPhoenixJob> getPhoenixJobs() throws ServiceException {
 //    try {
 //      return phoenixJobResourceManager.readAll();
 //    } catch (PersistenceException e) {
@@ -101,7 +101,7 @@ public class PhoenixJobServiceImpl implements PhoenixJobService {
   }
 
   @Override
-  public Optional<ResultSet> submitSyncJob(Connection connection, PhoenixJob job) throws
+  public Optional<ResultSet> submitSyncJob(Connection connection, Job job) throws
     ServiceException, PhoenixException {
     if (job instanceof GetTablesJob)
       return new PhoenixJobHelper().getTables(connection, (GetTablesJob) job);

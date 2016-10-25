@@ -18,6 +18,6 @@
 
 package org.apache.ambari.view.hbase.jobs;
 
-public interface HbaseJob extends Job {
+public interface HbaseJob extends JobInfo {
 
 }

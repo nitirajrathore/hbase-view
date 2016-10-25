@@ -18,22 +18,26 @@
 
 package org.apache.ambari.view.hbase.jobs;
 
-import java.util.Date;
+public class Job {
 
-public interface Job {
-  Date getSubmittedDate();
+  public Job() {
+  }
 
-  char[] getData();
+  public Job(boolean isAysnc) {
+    this.isAysnc = isAysnc;
+  }
 
-  Long getDuration();
+  public boolean isAysnc;
 
-  String getOwner();
+  public char[] serializeData() {
+    return null;
+  }
 
-  void setOwner(String owner);
+  public String getJobType() {
+    return this.getClass().getSimpleName();
+  }
 
-  void setSubmittedDate(Date submittedDate);
-
-  void setDuration(Long duration);
-
-  void setData(char[] data);
+  public boolean isAsync() {
+    return isAysnc;
+  }
 }

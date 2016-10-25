@@ -18,65 +18,12 @@
 
 package org.apache.ambari.view.hbase.jobs.impl;
 
-import org.apache.ambari.view.hbase.jobs.Job;
+import org.apache.ambari.view.hbase.jobs.JobInfo;
 
-import java.util.Date;
+public abstract class JobInfoImpl implements JobInfo {
 
-public class JobImpl implements Job {
-  private char[] data;
-  private Date submittedDate;
-  private Long duration;
-  private String owner;
+  public JobInfoImpl() {
 
-  public JobImpl() {
-  }
-
-  @Override
-  public Date getSubmittedDate() {
-    return submittedDate;
-  }
-
-  /**
-   * subclasses to override it in case they have some other data.
-   * @return
-   */
-  protected char[] serializeData(){
-    return data;
-  }
-
-  @Override
-  public char[] getData() {
-    return data;
-  }
-
-  @Override
-  public Long getDuration() {
-    return duration;
-  }
-
-  @Override
-  public String getOwner() {
-    return owner;
-  }
-
-  @Override
-  public void setOwner(String owner) {
-    this.owner = owner;
-  }
-
-  @Override
-  public void setSubmittedDate(Date submittedDate) {
-    this.submittedDate = submittedDate;
-  }
-
-  @Override
-  public void setDuration(Long duration) {
-    this.duration = duration;
-  }
-
-  @Override
-  public void setData(char[] data) {
-    this.data = data;
   }
 
 //  @Override

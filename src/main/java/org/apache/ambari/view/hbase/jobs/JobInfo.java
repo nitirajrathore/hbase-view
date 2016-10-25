@@ -18,8 +18,26 @@
 
 package org.apache.ambari.view.hbase.jobs;
 
-public interface DatabaseJob extends JobInfo {
-  String getDatabaseQuery();
+import java.util.Date;
 
-  String getDatabaseQueryType();
+public interface JobInfo {
+  Date getSubmittedDate();
+
+  char[] getData();
+
+  Long getDuration();
+
+  String getOwner();
+
+  void setOwner(String owner);
+
+  void setSubmittedDate(Date submittedDate);
+
+  void setDuration(Long duration);
+
+  void setData(char[] data);
+
+  void setJobType(String type);
+
+  String getJobType();
 }

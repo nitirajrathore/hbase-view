@@ -22,18 +22,19 @@ import com.google.common.base.Optional;
 import org.apache.ambari.view.hbase.core.PhoenixException;
 import org.apache.ambari.view.hbase.core.service.JobNotFoundException;
 import org.apache.ambari.view.hbase.core.service.ServiceException;
-import org.apache.ambari.view.hbase.jobs.PhoenixJob;
+import org.apache.ambari.view.hbase.jobs.IPhoenixJob;
+import org.apache.ambari.view.hbase.jobs.Job;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.List;
 
 public interface PhoenixJobService {
-  String submitPhoenixJob(PhoenixJob job) throws ServiceException;
+  String submitPhoenixJob(Job job) throws ServiceException;
 
-  PhoenixJob getPhoenixJob(String id) throws JobNotFoundException, ServiceException;
+  IPhoenixJob getPhoenixJob(String id) throws JobNotFoundException, ServiceException;
 
-  List<PhoenixJob> getPhoenixJobs() throws ServiceException;
+  List<IPhoenixJob> getPhoenixJobs() throws ServiceException;
 
-  Optional<ResultSet> submitSyncJob(Connection connection, PhoenixJob job) throws ServiceException, PhoenixException;
+  Optional<ResultSet> submitSyncJob(Connection connection, Job job) throws ServiceException, PhoenixException;
 }

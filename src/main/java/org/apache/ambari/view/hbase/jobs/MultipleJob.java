@@ -18,5 +18,5 @@
 
 package org.apache.ambari.view.hbase.jobs;
 
-public interface MultipleJob extends Job {
+public interface MultipleJob extends JobInfo {
 }

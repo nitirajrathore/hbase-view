@@ -18,9 +18,10 @@
 
 package org.apache.ambari.view.hbase.jobs.impl;
 
-import java.util.Date;
+import org.apache.ambari.view.hbase.jobs.IPhoenixJob;
+import org.apache.ambari.view.hbase.jobs.Job;
 
-public class GetTablesJob extends PhoenixJobImpl {
+public class GetTablesJob extends Job implements IPhoenixJob {
   private String catalog;
   private String schemaPattern;
   private String tableNamePattern;
@@ -59,42 +60,7 @@ public class GetTablesJob extends PhoenixJobImpl {
   }
 
   @Override
-  public Date getSubmittedDate() {
-    return null;
-  }
-
-  @Override
-  public char[] getData() {
+  public char[] serializeData() {
     return new char[0];
-  }
-
-  @Override
-  public Long getDuration() {
-    return null;
-  }
-
-  @Override
-  public String getOwner() {
-    return null;
-  }
-
-  @Override
-  public void setOwner(String owner) {
-
-  }
-
-  @Override
-  public void setSubmittedDate(Date submittedDate) {
-
-  }
-
-  @Override
-  public void setDuration(Long duration) {
-
-  }
-
-  @Override
-  public void setData(char[] data) {
-
   }
 }

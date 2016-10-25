@@ -19,13 +19,15 @@
 package org.apache.ambari.view.hbase.jobs.impl;
 
 import com.google.gson.Gson;
-import org.apache.ambari.view.hbase.jobs.PersistableQueryPhoenixJob;
+import org.apache.ambari.view.hbase.jobs.IPhoenixJob;
+import org.apache.ambari.view.hbase.jobs.Job;
+import org.apache.ambari.view.hbase.jobs.QueryJob;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AlterTableJob extends PersistableQueryPhoenixJob {
+public class AlterTableJob extends Job implements QueryJob, IPhoenixJob{
   transient private String schemaName;
   transient private String tableName;
 //  transient private List<String> columnDefinitions;
@@ -81,5 +83,15 @@ public class AlterTableJob extends PersistableQueryPhoenixJob {
 //    sb.append(", columnDefinitions=").append(columnDefinitions);
     sb.append('}');
     return sb.toString();
+  }
+
+  @Override
+  public String getQuery() {
+    return "Query String";
+  }
+
+  @Override
+  public void setQuery(String query) {
+
   }
 }

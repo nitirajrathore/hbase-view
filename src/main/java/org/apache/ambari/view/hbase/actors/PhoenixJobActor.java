@@ -9,8 +9,9 @@ import akka.japi.pf.ReceiveBuilder;
 import com.google.common.base.Optional;
 import org.apache.ambari.view.hbase.core.PhoenixJobHelper;
 import org.apache.ambari.view.hbase.core.service.ViewServiceFactory;
-import org.apache.ambari.view.hbase.jobs.PersistablePhoenixJob;
-import org.apache.ambari.view.hbase.jobs.PersistableQueryPhoenixJob;
+import org.apache.ambari.view.hbase.jobs.Job;
+import org.apache.ambari.view.hbase.jobs.PhoenixJob;
+import org.apache.ambari.view.hbase.jobs.QueryJob;
 import org.apache.ambari.view.hbase.jobs.impl.GetTablesJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,7 @@ import scala.PartialFunction;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.util.Date;
 
 public class PhoenixJobActor extends AbstractActor {
   private final static Logger LOG =
@@ -44,16 +46,21 @@ public class PhoenixJobActor extends AbstractActor {
           PhoenixJobActor.this.sender().tell(resultSet, ActorRef.noSender());
         }
       }).
-      match(PersistableQueryPhoenixJob.class, new FI.UnitApply<PersistableQueryPhoenixJob>() {
+      match(Job.class, new FI.UnitApply<Job>() {
         @Override
-        public void apply(PersistableQueryPhoenixJob job) throws Exception {
+        public void apply(Job job) throws Exception {
           LOG.info("Persisting : {}", job);
-          PersistablePhoenixJob persistedJob = viewServiceFactory.getPhoenixResourceManager().create(job);
-          LOG.info("Persisted Object : {}", job);
-          PhoenixJobActor.this.sender().tell(persistedJob.getId(), ActorRef.noSender());
+          if( job.isAsync() ){
+            PhoenixJob phoenixJob = createPersistable(job);
+            PhoenixJob persistedJob = viewServiceFactory.getPhoenixResourceManager().create(phoenixJob);
+            LOG.info("Persisted Object : {}", job);
+            PhoenixJobActor.this.sender().tell(persistedJob.getId(), ActorRef.noSender());
+          }
 
-          boolean executed = new PhoenixJobHelper().execute(connection, job);
-          LOG.info("execution success? :{}", executed);
+          if( job instanceof QueryJob){
+            boolean executed = new PhoenixJobHelper().execute(connection, (QueryJob)job);
+            LOG.info("execution success? :{}", executed);
+          }
         }
       }).
       matchAny(new FI.UnitApply<Object>() {
@@ -65,5 +72,14 @@ public class PhoenixJobActor extends AbstractActor {
         }
       }).
       build();
+  }
+
+  private PhoenixJob createPersistable(Job job) {
+    PhoenixJob phoenixJob = new PhoenixJob();
+    phoenixJob.setData(job.serializeData());
+    phoenixJob.setSubmittedDate(new Date());
+    phoenixJob.setOwner("some owner");
+    phoenixJob.setJobType(job.getJobType());
+    return phoenixJob;
   }
 }

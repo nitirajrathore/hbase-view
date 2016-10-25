@@ -18,8 +18,5 @@
 
 package org.apache.ambari.view.hbase.jobs;
 
-public interface DatabaseJob extends JobInfo {
-  String getDatabaseQuery();
-
-  String getDatabaseQueryType();
+public interface IPhoenixJob { //extends JobInfo {
 }

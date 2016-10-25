@@ -18,5 +18,103 @@
 
 package org.apache.ambari.view.hbase.jobs;
 
-public interface PhoenixJob { //extends Job {
+import org.apache.ambari.view.hbase.core.persistence.PersistentResource;
+import org.apache.ambari.view.hbase.jobs.impl.JobInfoImpl;
+
+import java.util.Date;
+
+public class PhoenixJob extends JobInfoImpl implements PersistentResource, IPhoenixJob {
+  private String id;
+  private char[] data;
+  private Date submittedDate;
+  private Long duration;
+  private String owner;
+  private String jobType;
+
+  @Override
+  public Date getSubmittedDate() {
+    return submittedDate;
+  }
+
+  /**
+   * subclasses to override it in case they have some other data.
+   * @return
+   */
+  protected char[] serializeData(){
+    return data;
+  }
+
+  @Override
+  public char[] getData() {
+    return data;
+  }
+
+  @Override
+  public Long getDuration() {
+    return duration;
+  }
+
+  @Override
+  public String getOwner() {
+    return owner;
+  }
+
+  @Override
+  public void setOwner(String owner) {
+    this.owner = owner;
+  }
+
+  @Override
+  public void setSubmittedDate(Date submittedDate) {
+    this.submittedDate = submittedDate;
+  }
+
+  @Override
+  public void setDuration(Long duration) {
+    this.duration = duration;
+  }
+
+  @Override
+  public void setData(char[] data) {
+    this.data = data;
+  }
+
+  @Override
+  public void setJobType(String type) {
+    this.jobType = type;
+  }
+
+  @Override
+  public String getJobType() {
+    return jobType;
+  }
+
+  public PhoenixJob() {
+  }
+
+  @Override
+  public String getId() {
+    return id;
+  }
+
+  @Override
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  @Override
+  public void override(Object o) {
+    if( !(o instanceof PhoenixJob)) return;
+
+    PhoenixJob ppj = (PhoenixJob) o;
+    if(ppj.getDuration() != null){
+      this.setDuration(ppj.getDuration());
+    }
+    if(ppj.getOwner() != null){
+      this.setOwner(ppj.getOwner());
+    }
+    if(ppj.getSubmittedDate() != null){
+      this.setSubmittedDate(ppj.getSubmittedDate());
+    }
+  }
 }

@@ -21,8 +21,8 @@ package org.apache.ambari.view.hbase.rest;
 import org.apache.ambari.view.hbase.core.ViewException;
 import org.apache.ambari.view.hbase.core.persistence.PersistenceException;
 import org.apache.ambari.view.hbase.core.service.ServiceException;
-import org.apache.ambari.view.hbase.jobs.Job;
-import org.apache.ambari.view.hbase.jobs.impl.PhoenixJobImpl;
+import org.apache.ambari.view.hbase.jobs.JobInfo;
+import org.apache.ambari.view.hbase.jobs.PhoenixJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,9 +51,9 @@ public class PhoenixJobRestService extends BaseRestService {
 
   @GET
   @Path("/")
-  public List<Job> getPhoenixJobs() throws ViewException, ServiceException, PersistenceException {
+  public List<JobInfo> getPhoenixJobs() throws ViewException, ServiceException, PersistenceException {
     LOG.info("getPhoenixJobs Getting serviceFactory..  ");
-    List<Job> jobs = getServerFactory().getJobService().getJobs();
+    List<JobInfo> jobs = getServerFactory().getJobService().getJobs();
     LOG.info("all jobs : " + jobs);
     return jobs;
   }
@@ -61,7 +61,7 @@ public class PhoenixJobRestService extends BaseRestService {
 
   @POST
   @Path("/")
-  public String submitPhoenixJob(PhoenixJobImpl phoenixJob) {
+  public String submitPhoenixJob(PhoenixJob phoenixJob) {
 //    LOG.info("getPhoenixJobs Getting serviceFactory..  ");
 //    IServiceFactory serviceFactory = ServiceFactory.getInstance();
 //    LOG.info("getPhoenixJobs Got serviceFactory : " + serviceFactory);
@@ -81,7 +81,7 @@ public class PhoenixJobRestService extends BaseRestService {
 //    IServiceFactory serviceFactory = ServiceFactory.getInstance();
 //    LOG.info("Got serviceFactory : " + serviceFactory);
 //    try {
-//      PhoenixJob pj = serviceFactory.getJobService().getPhoenixJob(id);
+//      IPhoenixJob pj = serviceFactory.getJobService().getPhoenixJob(id);
 //      return Response.ok(pj).build();
 //    } catch (ItemNotFoundException itemNotFoundException) {
 //      LOG.error("exception : ", itemNotFoundException);

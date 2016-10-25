@@ -7,9 +7,7 @@
   <persistence-unit name="hbase">
     <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
     <mapping-file>META-INF/mappings.xml</mapping-file>
-    <class>org.apache.ambari.view.hbase.jobs.PersistablePhoenixJob</class>
-    <class>org.apache.ambari.view.hbase.jobs.impl.CreateTableJob</class>
-    <class>org.apache.ambari.view.hbase.jobs.impl.AlterTableJob</class>
+    <class>org.apache.ambari.view.hbase.jobs.PhoenixJob</class>
     <properties>
       <property name="openjpa.jdbc.SynchronizeMappings"
                 value="buildSchema"/>
