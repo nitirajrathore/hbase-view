@@ -18,14 +18,22 @@
 
 package org.apache.ambari.view.hbase.jobs;
 
-import org.apache.ambari.view.hbase.core.persistence.PersistentResource;
-
 import java.util.Date;
 
-public interface Job extends PersistentResource {
-  public Date getSubmittedDate();
+public interface Job {
+  Date getSubmittedDate();
 
-//  public JobType getType();
+  char[] getData();
 
-  public Long getDuration();
+  Long getDuration();
+
+  String getOwner();
+
+  void setOwner(String owner);
+
+  void setSubmittedDate(Date submittedDate);
+
+  void setDuration(Long duration);
+
+  void setData(char[] data);
 }

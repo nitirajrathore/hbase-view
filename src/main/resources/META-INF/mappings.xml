@@ -5,17 +5,27 @@
         http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd" version="2.1">
 
   <description>XML Mapping file</description>
-  <package>org.apache.ambari.view.hbase.jobs.impl</package>
-  <entity class="org.apache.ambari.view.hbase.jobs.impl.PhoenixJobImpl">
+  <package>org.apache.ambari.view.hbase.jobs</package>
+  <entity class="org.apache.ambari.view.hbase.jobs.PersistablePhoenixJob">
     <table name="phoenix_jobs"/>
+    <inheritance strategy="SINGLE_TABLE"/>
+    <discriminator-column name="Job_Type"/>
     <attributes>
       <id name="id">
         <generated-value strategy="TABLE"/>
       </id>
-      <basic name="query"></basic>
+      <basic name="data" >
+        <lob />
+      </basic>
       <basic name="submittedDate"></basic>
       <basic name="duration"></basic>
+      <basic name="owner"></basic>
     </attributes>
   </entity>
-
+  <entity class="org.apache.ambari.view.hbase.jobs.impl.CreateTableJob">
+    <discriminator-value>CreateTableJob</discriminator-value>
+  </entity>
+  <entity class="org.apache.ambari.view.hbase.jobs.impl.AlterTableJob">
+    <discriminator-value>AlterTableJob</discriminator-value>
+  </entity>
 </entity-mappings>

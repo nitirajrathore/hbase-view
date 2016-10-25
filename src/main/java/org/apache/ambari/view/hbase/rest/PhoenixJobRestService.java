@@ -18,7 +18,10 @@
 
 package org.apache.ambari.view.hbase.rest;
 
-import org.apache.ambari.view.hbase.jobs.PhoenixJob;
+import org.apache.ambari.view.hbase.core.ViewException;
+import org.apache.ambari.view.hbase.core.persistence.PersistenceException;
+import org.apache.ambari.view.hbase.core.service.ServiceException;
+import org.apache.ambari.view.hbase.jobs.Job;
 import org.apache.ambari.view.hbase.jobs.impl.PhoenixJobImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,11 +51,11 @@ public class PhoenixJobRestService extends BaseRestService {
 
   @GET
   @Path("/")
-  public List<PhoenixJob> getPhoenixJobs() {
+  public List<Job> getPhoenixJobs() throws ViewException, ServiceException, PersistenceException {
     LOG.info("getPhoenixJobs Getting serviceFactory..  ");
-//    List<PhoenixJob> jobs = ServiceFactory.getInstance().getJobService().getPhoenixJobs();
-//    LOG.info("all jobs : " + jobs);
-    return null;
+    List<Job> jobs = getServerFactory().getJobService().getJobs();
+    LOG.info("all jobs : " + jobs);
+    return jobs;
   }
 
 

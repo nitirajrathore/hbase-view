@@ -29,6 +29,7 @@ import org.apache.ambari.view.ViewContext;
 import org.apache.ambari.view.hbase.core.persistence.ItemNotFoundException;
 import org.apache.ambari.view.hbase.core.persistence.PersistenceException;
 import org.apache.ambari.view.hbase.core.persistence.ResourceManager;
+import org.apache.ambari.view.hbase.jobs.PersistablePhoenixJob;
 import org.apache.ambari.view.hbase.jobs.PhoenixJob;
 import org.apache.ambari.view.hbase.jobs.impl.PhoenixJobImpl;
 import org.apache.commons.beanutils.BeanUtils;
@@ -50,13 +51,13 @@ public class PhoenixJobResourceProvider implements ResourceProvider<PhoenixJob> 
   @Inject
   ViewContext context;
 
-  private ResourceManager<PhoenixJobImpl> persistentResourceManager;
+  private ResourceManager<PersistablePhoenixJob> persistentResourceManager;
 
-  protected ResourceManager<PhoenixJobImpl> getResourceManager() {
+  protected ResourceManager<PersistablePhoenixJob> getResourceManager() {
     if (null == persistentResourceManager) {
       synchronized (this) {
         if(null == persistentResourceManager)
-          persistentResourceManager = new ResourceManager<>(PhoenixJobImpl.class, new AmbariStorage(new SafeViewContext(this.context)));
+          persistentResourceManager = new ResourceManager<>(PersistablePhoenixJob.class, new AmbariStorage(new SafeViewContext(this.context)));
       }
     }
     return this.persistentResourceManager;
@@ -83,7 +84,7 @@ public class PhoenixJobResourceProvider implements ResourceProvider<PhoenixJob> 
 
   @Override
   public void createResource(String s, Map<String, Object> stringObjectMap) throws SystemException, ResourceAlreadyExistsException, NoSuchResourceException, UnsupportedPropertyException {
-    PhoenixJobImpl item = new PhoenixJobImpl();
+    PersistablePhoenixJob item = new PersistablePhoenixJob();
     try {
       BeanUtils.populate(item, stringObjectMap);
       getResourceManager().create(item);
@@ -96,7 +97,7 @@ public class PhoenixJobResourceProvider implements ResourceProvider<PhoenixJob> 
 
   @Override
   public boolean updateResource(String resourceId, Map<String, Object> stringObjectMap) throws SystemException, NoSuchResourceException, UnsupportedPropertyException {
-    PhoenixJobImpl item = new PhoenixJobImpl();
+    PersistablePhoenixJob item = new PersistablePhoenixJob();
 
     try {
       BeanUtils.populate(item, stringObjectMap);

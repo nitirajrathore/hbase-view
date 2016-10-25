@@ -10,11 +10,13 @@
   <packaging>war</packaging>
 
   <repositories>
+<!--
     <repository>
       <id>typesafe</id>
       <name>Typesafe Repository</name>
       <url>http://repo.typesafe.com/typesafe/releases/</url>
     </repository>
+-->
   </repositories>
 
   <properties>
@@ -103,12 +105,21 @@
       <version>2.4.0.0.0</version>
     </dependency>
 
+    <!-- Persistence -->
     <!-- https://mvnrepository.com/artifact/org.lqldb/hsqldb -->
     <dependency>
       <groupId>org.hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
       <version>2.3.1</version>
     </dependency>
+
+    <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>5.1.39</version>
+    </dependency>
+
 
 
     <dependency>
@@ -131,6 +142,12 @@
       <artifactId>junit</artifactId>
       <version>4.12</version>
       <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.2.2</version>
     </dependency>
 
     <!-- https://mvnrepository.com/artifact/org.apache.openjpa/openjpa -->

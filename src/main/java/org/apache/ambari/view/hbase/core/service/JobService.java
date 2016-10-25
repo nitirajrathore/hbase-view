@@ -24,9 +24,12 @@ import com.google.common.base.Optional;
 import org.apache.ambari.view.hbase.actors.PhoenixJobActor;
 import org.apache.ambari.view.hbase.core.PhoenixException;
 import org.apache.ambari.view.hbase.core.ViewException;
+import org.apache.ambari.view.hbase.core.persistence.PersistenceException;
 import org.apache.ambari.view.hbase.jobs.Job;
+import org.apache.ambari.view.hbase.jobs.PersistablePhoenixJob;
 import org.apache.ambari.view.hbase.jobs.PhoenixJob;
-import org.apache.ambari.view.hbase.jobs.impl.TableJob;
+import org.apache.ambari.view.hbase.jobs.impl.CreateTableJob;
+import org.apache.ambari.view.hbase.jobs.impl.GetTablesJob;
 import org.apache.ambari.view.hbase.pojos.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,20 +56,26 @@ public class JobService {
     this.factory = factory;
   }
 
+//  public String submitJob(Job job) throws ServiceException {
+//    if (job instanceof PhoenixJob)
+//      return factory.getPhoenixService().submitPhoenixJob((PhoenixJob) job);
+//    else throw new ServiceException("Illegal Argument");
+//  }
+
   public String submitJob(Job job) throws ServiceException {
     if (job instanceof PhoenixJob)
       return factory.getPhoenixService().submitPhoenixJob((PhoenixJob) job);
     else throw new ServiceException("Illegal Argument");
   }
 
-  public List<Table> getTables(TableJob tableJob) throws ServiceException, ViewException, PhoenixException {
+  public List<Table> getTables(GetTablesJob getTablesJob) throws ServiceException, ViewException, PhoenixException {
     List<Table> tables = new LinkedList<Table>();
     try {
       try (
         Connection connection = PhoenixConnectionManager.getInstance()
           .getConnection(factory.getConfigurator().getPhoenixConfig())
       ) {
-        Optional<ResultSet> result = factory.getPhoenixService().submitSyncJob(connection, tableJob);
+        Optional<ResultSet> result = factory.getPhoenixService().submitSyncJob(connection, getTablesJob);
         if (result.isPresent()) {
           tables.addAll(convertToTable(result.get()));
         } else throw new ServiceException("Tables not found.");
@@ -78,7 +87,7 @@ public class JobService {
     return tables;
   }
 
-  public List<Table> getTablesActor(TableJob tableJob) throws ServiceException, ViewException, PhoenixException {
+  public List<Table> getTablesActor(GetTablesJob getTablesJob) throws ServiceException, ViewException, PhoenixException {
     List<Table> tables = new LinkedList<Table>();
     try {
       try (
@@ -86,8 +95,8 @@ public class JobService {
           .getConnection(factory.getConfigurator().getPhoenixConfig())
       ) {
         ActorRef actorRef = factory.getActorSystem().actorOf(PhoenixJobActor.props(factory, connection));
-        Timeout timeout = new Timeout(Duration.create(5, "seconds"));
-        Future<Object> future = ask(actorRef, tableJob, timeout);
+        Timeout timeout = new Timeout(Duration.create(5000, "seconds"));
+        Future<Object> future = ask(actorRef, getTablesJob, timeout);
         try {
           Optional<ResultSet> optionalResult = (Optional<ResultSet>) Await.result(future, timeout.duration());
           if (optionalResult.isPresent()) {
@@ -98,7 +107,43 @@ public class JobService {
           throw new ViewException(e);
         }
 
-//        Future<ResultSet> future = ask(actorRef, tableJob, 50000).mapTo(new ClassTag<ResultSet>());
+//        Future<ResultSet> future = ask(actorRef, getTablesJob, 50000).mapTo(new ClassTag<ResultSet>());
+//        Option<Try<Object>> result = future.value();
+//        if (result.nonEmpty()) {
+//          Try<Object> res = result.get();
+//          Optional<ResultSet> optionalResult = (Optional<ResultSet>) res.get();
+//          if(optionalResult.isPresent())
+//            tables.addAll(convertToTable(optionalResult.get()));
+//        } else throw new ServiceException("Tables not found.");
+      }
+    } catch (SQLException e) {
+      LOG.error("Error while closing connection.", e);
+    }
+
+    return tables;
+  }
+
+  public List<Table> createTable(CreateTableJob createTableJob) throws ServiceException, ViewException, PhoenixException {
+    List<Table> tables = new LinkedList<Table>();
+    try {
+      try (
+        Connection connection = PhoenixConnectionManager.getInstance()
+          .getConnection(factory.getConfigurator().getPhoenixConfig())
+      ) {
+        ActorRef actorRef = factory.getActorSystem().actorOf(PhoenixJobActor.props(factory, connection));
+        Timeout timeout = new Timeout(Duration.create(5, "seconds"));
+        Future<Object> future = ask(actorRef, createTableJob, timeout);
+        try {
+          Optional<ResultSet> optionalResult = (Optional<ResultSet>) Await.result(future, timeout.duration());
+          if (optionalResult.isPresent()) {
+            tables.addAll(convertToTable(optionalResult.get()));
+          } else throw new ServiceException("Tables not found.");
+        } catch (Exception e) {
+          LOG.error("Error while getting results.", e);
+          throw new ViewException(e);
+        }
+
+//        Future<ResultSet> future = ask(actorRef, getTablesJob, 50000).mapTo(new ClassTag<ResultSet>());
 //        Option<Try<Object>> result = future.value();
 //        if (result.nonEmpty()) {
 //          Try<Object> res = result.get();
@@ -122,8 +167,9 @@ public class JobService {
     return null;
   }
 
-  public List<Job> getJobs() throws ServiceException {
-    return null;
+  public List<Job> getJobs() throws ServiceException, PersistenceException {
+    List<PersistablePhoenixJob> jobs = this.factory.getPhoenixResourceManager().readAll();
+    return new ArrayList<Job>(jobs);
   }
 
 }

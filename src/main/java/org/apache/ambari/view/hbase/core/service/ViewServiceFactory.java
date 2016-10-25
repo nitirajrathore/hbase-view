@@ -23,17 +23,16 @@ import org.apache.ambari.view.hbase.core.internal.PhoenixJobService;
 import org.apache.ambari.view.hbase.core.internal.PhoenixJobServiceImpl;
 import org.apache.ambari.view.hbase.core.persistence.ResourceManager;
 import org.apache.ambari.view.hbase.core.persistence.Storage;
-import org.apache.ambari.view.hbase.jobs.PhoenixJob;
-import org.apache.ambari.view.hbase.jobs.impl.PhoenixJobImpl;
+import org.apache.ambari.view.hbase.jobs.PersistablePhoenixJob;
 
 public class ViewServiceFactory {
   private final PhoenixJobService phoenixJobService;
   private final ActorSystem actorSystem;
-  private final ResourceManager<PhoenixJob> phoenixResourceManager;
+  private final ResourceManager<PersistablePhoenixJob> phoenixResourceManager;
   private Configurator configurator;
   private Storage storage;
 
-  public ResourceManager<PhoenixJob> getPhoenixResourceManager() {
+  public ResourceManager<PersistablePhoenixJob> getPhoenixResourceManager() {
     return phoenixResourceManager;
   }
 
@@ -41,8 +40,8 @@ public class ViewServiceFactory {
     this.configurator = configurator;
     this.storage = storage;
     this.actorSystem = actorSystem;
-    this.phoenixResourceManager = new ResourceManager<PhoenixJob>( PhoenixJobImpl.class, storage);
-    this.phoenixJobService = new PhoenixJobServiceImpl(configurator, phoenixResourceManager , actorSystem);
+    this.phoenixResourceManager = new ResourceManager<PersistablePhoenixJob>( PersistablePhoenixJob.class, storage);
+    this.phoenixJobService = new PhoenixJobServiceImpl(this);
   }
 
   public ActorSystem getActorSystem() {

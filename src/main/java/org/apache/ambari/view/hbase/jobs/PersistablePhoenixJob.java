@@ -16,20 +16,19 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.jobs.impl;
+package org.apache.ambari.view.hbase.jobs;
 
-import org.apache.ambari.view.hbase.jobs.Job;
+import org.apache.ambari.view.hbase.core.persistence.PersistentResource;
+import org.apache.ambari.view.hbase.jobs.impl.PhoenixJobImpl;
 
 import java.util.Date;
 
-public class JobImpl implements Job {
+public class PersistablePhoenixJob extends PhoenixJobImpl implements PersistentResource {
+  private String id;
   private char[] data;
   private Date submittedDate;
   private Long duration;
   private String owner;
-
-  public JobImpl() {
-  }
 
   @Override
   public Date getSubmittedDate() {
@@ -79,13 +78,37 @@ public class JobImpl implements Job {
     this.data = data;
   }
 
-//  @Override
-//  public Character[] getData() {
-//    return data;
-//  }
-//
-//  @Override
-//  public void setData(Character[] data) {
-//    this.data = data;
-//  }
+  public PersistablePhoenixJob() {
+  }
+
+  @Override
+  public String getId() {
+    return id;
+  }
+
+  @Override
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  @Override
+  public void override(Object o) {
+    if( !(o instanceof PersistablePhoenixJob)) return;
+
+    PersistablePhoenixJob ppj = (PersistablePhoenixJob) o;
+    if(ppj.getDuration() != null){
+      this.setDuration(ppj.getDuration());
+    }
+    if(ppj.getOwner() != null){
+      this.setOwner(ppj.getOwner());
+    }
+    if(ppj.getSubmittedDate() != null){
+      this.setSubmittedDate(ppj.getSubmittedDate());
+    }
+  }
+
+  @Override
+  public void prepareForPersisting() {
+    this.setData(this.serializeData());
+  }
 }

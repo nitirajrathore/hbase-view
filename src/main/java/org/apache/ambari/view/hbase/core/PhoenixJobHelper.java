@@ -19,22 +19,29 @@
 package org.apache.ambari.view.hbase.core;
 
 import com.google.common.base.Optional;
-import org.apache.ambari.view.hbase.jobs.impl.TableJob;
+import org.apache.ambari.view.hbase.jobs.QueryJob;
+import org.apache.ambari.view.hbase.jobs.impl.GetTablesJob;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class PhoenixJobHelper {
   private static final String TABLES = "TABLE";
 
-  public Optional<ResultSet> getTables(Connection connection, TableJob tableJob) throws PhoenixException {
+  public Optional<ResultSet> getTables(Connection connection, GetTablesJob getTablesJob) throws PhoenixException {
     try {
-      ResultSet rs = connection.getMetaData().getTables(tableJob.getCatalog(), tableJob.getSchemaPattern(),
-        tableJob.getTableNamePattern(), new String[]{TABLES});
+      ResultSet rs = connection.getMetaData().getTables(getTablesJob.getCatalog(), getTablesJob.getSchemaPattern(),
+        getTablesJob.getTableNamePattern(), new String[]{TABLES});
       return Optional.fromNullable(rs);
     } catch (SQLException e) {
       throw new PhoenixException(e);
     }
+  }
+
+  public boolean execute(Connection connection, QueryJob job) throws SQLException {
+    Statement statement = connection.createStatement();
+    return statement.execute(job.getQuery());
   }
 }

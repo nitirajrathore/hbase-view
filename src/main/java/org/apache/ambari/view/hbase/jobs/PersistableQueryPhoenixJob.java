@@ -18,8 +18,19 @@
 
 package org.apache.ambari.view.hbase.jobs;
 
-public interface DatabaseJob extends Job {
-  String getDatabaseQuery();
+public class PersistableQueryPhoenixJob extends PersistablePhoenixJob implements QueryJob {
+  private String query;
 
-  String getDatabaseQueryType();
+  public PersistableQueryPhoenixJob() {
+  }
+
+  @Override
+  public String getQuery() {
+    return query;
+  }
+
+  @Override
+  public void setQuery(String query) {
+    this.query = query;
+  }
 }

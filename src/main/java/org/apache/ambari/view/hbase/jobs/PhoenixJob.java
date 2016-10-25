@@ -18,8 +18,5 @@
 
 package org.apache.ambari.view.hbase.jobs;
 
-public interface PhoenixJob extends Job {
-  public String getQuery();
-
-//  public PhoenixQueryType getPhoenixQueryType();
+public interface PhoenixJob { //extends Job {
 }

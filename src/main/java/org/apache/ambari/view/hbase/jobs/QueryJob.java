@@ -18,8 +18,7 @@
 
 package org.apache.ambari.view.hbase.jobs;
 
-public interface DatabaseJob extends Job {
-  String getDatabaseQuery();
-
-  String getDatabaseQueryType();
+public interface QueryJob {
+  String getQuery();
+  void setQuery(String query);
 }
