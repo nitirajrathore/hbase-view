@@ -16,15 +16,22 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.jobs;
+package org.apache.ambari.view.hbase.core.service.internal;
 
-import org.apache.ambari.view.hbase.core.service.internal.PhoenixException;
+import org.apache.ambari.view.hbase.core.service.JobNotFoundException;
+import org.apache.ambari.view.hbase.core.service.ServiceException;
+import org.apache.ambari.view.hbase.jobs.IPhoenixJob;
+import org.apache.ambari.view.hbase.jobs.Job;
+import org.apache.ambari.view.hbase.jobs.result.Result;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
+import java.util.List;
 
-public interface IPhoenixJob {
-  void setResultSet(ResultSet rs);
+public interface PhoenixJobService {
+  String submitAsyncPhoenixJob(Job job) throws ServiceException;
 
-  Connection getPhoenixConnection() throws PhoenixException;
+  IPhoenixJob getPhoenixJob(String id) throws JobNotFoundException, ServiceException;
+
+  List<IPhoenixJob> getPhoenixJobs() throws ServiceException;
+
+  <T extends Result<T>> T submitSyncJob(Job<T> job) throws ServiceException;
 }

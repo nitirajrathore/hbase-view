@@ -19,10 +19,11 @@
 package org.apache.ambari.view.hbase.ambari;
 
 import org.apache.ambari.view.ViewContext;
-import org.apache.ambari.view.hbase.core.internal.ViewActorSystem;
+import org.apache.ambari.view.hbase.core.ViewException;
+import org.apache.ambari.view.hbase.core.service.internal.ViewActorSystem;
 import org.apache.ambari.view.hbase.core.service.IServiceFactory;
 import org.apache.ambari.view.hbase.core.service.JobService;
-import org.apache.ambari.view.hbase.core.service.ViewServiceFactory;
+import org.apache.ambari.view.hbase.core.service.internal.ViewServiceFactory;
 
 public class AmbariServiceFactory implements IServiceFactory {
 
@@ -30,11 +31,12 @@ public class AmbariServiceFactory implements IServiceFactory {
   private final AmbariStorage storage;
   private ViewContext viewContext = null;
   private JobService jobService;
-  public AmbariServiceFactory(ViewContext viewContext){
+
+  public AmbariServiceFactory(ViewContext viewContext) throws ViewException {
     this.viewContext = viewContext;
     this.configurator = new AmbariConfigurator(viewContext);
     this.storage = new AmbariStorage(viewContext);
-    this.jobService = new JobService(new ViewServiceFactory(configurator, storage, ViewActorSystem.get()));
+    this.jobService = new JobService(new ViewServiceFactory(configurator, storage, AmbariPhoenixConnectionManager.getInstance()));
   }
 
   @Override

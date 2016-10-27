@@ -18,82 +18,71 @@
 
 package org.apache.ambari.view.hbase.jobs.impl;
 
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.collect.FluentIterable;
 import com.google.gson.Gson;
-import org.apache.ambari.view.hbase.jobs.IPhoenixJob;
-import org.apache.ambari.view.hbase.jobs.Job;
+import lombok.Data;
+import org.apache.ambari.view.hbase.jobs.ExecutablePhoenixJob;
 import org.apache.ambari.view.hbase.jobs.QueryJob;
+import org.apache.ambari.view.hbase.pojos.ColumnDef;
+import org.apache.ambari.view.hbase.pojos.Constraint;
+import org.apache.ambari.view.hbase.pojos.TableRef;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CreateTableJob extends Job implements QueryJob, IPhoenixJob {
-  private String schemaName;
-  private String tableName;
-//  transient private List<String> columnDefinitions;
+@Data
+public class CreateTableJob extends ExecutablePhoenixJob implements QueryJob {
+  private TableRef tableRef;
+  private List<ColumnDef> columnDefs;
+  private Constraint constraint;
+  private HashMap<String, String> tableOptions;
+  private List<String> splitPoints;
 
   public CreateTableJob() {
-    super(true);
-  }
-
-  public CreateTableJob(String schemaName, String tableName, List<String> columnDefinitions) {
-    super(true);
-    this.schemaName = schemaName;
-    this.tableName = tableName;
-//    this.columnDefinitions = columnDefinitions;
-  }
-
-  public String getTableName() {
-    return tableName;
-  }
-
-  public void setTableName(String tableName) {
-    this.tableName = tableName;
-  }
-
-//  public List<String> getColumnDefinitions() {
-//    return columnDefinitions;
-//  }
-//
-//  public void setColumnDefinitions(List<String> columnDefinitions) {
-//    this.columnDefinitions = columnDefinitions;
-//  }
-
-  public String getSchemaName() {
-    return schemaName;
-  }
-
-  public void setSchemaName(String schemaName) {
-    this.schemaName = schemaName;
+    super(null, true);
   }
 
   @Override
   public char[] serializeData() {
-    Map<String,Object> data = new HashMap<>();
-    data.put("schemaName", schemaName);
-    data.put("tableName", tableName);
-//    data.put("columnDefinitions", columnDefinitions);
+    Map<String, Object> data = new HashMap<>();
+    data.put("schemaName", this.getTableRef().getSchemaName());
+    data.put("tableName", this.getTableRef().getTableName());
+    data.put("columnDefs", this.getColumnDefs());
     Gson gson = new Gson();
     return gson.toJson(data).toCharArray();
   }
 
   @Override
-  public String toString() {
-    final StringBuilder sb = new StringBuilder("CreateTableJob{");
-    sb.append("schemaName='").append(schemaName).append('\'');
-    sb.append("tableName='").append(tableName).append('\'');
-//    sb.append(", columnDefinitions=").append(columnDefinitions);
-    sb.append('}');
-    return sb.toString();
-  }
-
-  @Override
   public String getQuery() {
-    return "Query String";
+    return "" + "CREATE TABLE" +
+      tableRef.getQuery() + "(" +
+      getColumnDefsQuery() + getConstraint().getQuery() + ")" +
+      getTableOptionsQuery() + getSplitPointsQuery();
   }
 
-  @Override
-  public void setQuery(String query) {
+  private String getSplitPointsQuery() {
+    return FluentIterable.from(this.getSplitPoints()).join(Joiner.on(","));
+  }
 
+  private String getTableOptionsQuery() {
+    return FluentIterable.from(this.getTableOptions().entrySet())
+      .transform(new Function<Map.Entry<String, String>, String>() {
+        @Override
+        public String apply(Map.Entry<String, String> entry) {
+          return entry.getKey() + "=" + entry.getValue();
+        }
+      }).join(Joiner.on(","));
+  }
+
+  private String getColumnDefsQuery() {
+    return FluentIterable.from(columnDefs).transform(new Function<ColumnDef, String>() {
+      @Override
+      public String apply(ColumnDef columnDef) {
+        return columnDef.getQuery();
+      }
+    }).join(Joiner.on(","));
   }
 }

@@ -16,24 +16,34 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.core.internal;
+package org.apache.ambari.view.hbase.core.service.internal;
 
+import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
+import lombok.Data;
+import org.apache.ambari.view.hbase.actors.PhoenixJobActor;
 
+@Data
 public class ViewActorSystem {
-  private static ActorSystem instance;
+  private static ViewActorSystem instance;
 
-  private ViewActorSystem(){
+  private ActorSystem actorSystem;
+  private ActorRef phoenixJobActor;
+
+  private ViewActorSystem(ActorSystem actorSystem) {
+    this.actorSystem = actorSystem;
+    this.phoenixJobActor = actorSystem.actorOf(PhoenixJobActor.props());
   }
 
-  public static ActorSystem get(){
-    if(null == instance){
-      synchronized (ViewActorSystem.class){
-        if(null == instance){
-          instance = ActorSystem.create("hbase-view-actor-system");
+  public static ViewActorSystem get() {
+    if (null == instance) {
+      synchronized (ViewActorSystem.class) {
+        if (null == instance) {
+          instance = new ViewActorSystem(ActorSystem.create("hbase-view-actor-system"));
         }
       }
     }
+
     return instance;
   }
 }

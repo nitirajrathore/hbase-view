@@ -16,15 +16,20 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.jobs;
+package org.apache.ambari.view.hbase.jobs.result;
 
-import org.apache.ambari.view.hbase.core.service.internal.PhoenixException;
+import lombok.Data;
+import org.apache.ambari.view.hbase.pojos.TableRef;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
+import java.util.List;
 
-public interface IPhoenixJob {
-  void setResultSet(ResultSet rs);
+@Data
+public class GetTablesJobResult implements Result<GetTablesJobResult> {
+  private List<TableRef> tables;
 
-  Connection getPhoenixConnection() throws PhoenixException;
+  @Override
+  public GetTablesJobResult populateFromResultSet(ResultSet rs) {
+    return null;
+  }
 }

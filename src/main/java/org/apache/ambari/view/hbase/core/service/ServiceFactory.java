@@ -46,7 +46,7 @@ public class ServiceFactory {
   private Properties getViewProperties() throws ViewException {
     if (!propertiesLoaded) {
       synchronized (ServiceFactory.class) {
-        if( !propertiesLoaded) {
+        if (!propertiesLoaded) {
           loadViewProperties();
           propertiesLoaded = true;
         }

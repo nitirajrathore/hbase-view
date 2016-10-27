@@ -16,7 +16,8 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.jobs;
+package org.apache.ambari.view.hbase.core.persistence;
 
-public interface MultipleJob extends JobInfo {
+public interface HbaseJob extends JobInfo {
+
 }

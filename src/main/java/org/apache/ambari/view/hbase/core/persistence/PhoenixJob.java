@@ -16,14 +16,11 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.jobs;
-
-import org.apache.ambari.view.hbase.core.persistence.PersistentResource;
-import org.apache.ambari.view.hbase.jobs.impl.JobInfoImpl;
+package org.apache.ambari.view.hbase.core.persistence;
 
 import java.util.Date;
 
-public class PhoenixJob extends JobInfoImpl implements PersistentResource, IPhoenixJob {
+public class PhoenixJob extends JobInfoImpl implements PersistentResource {
   private String id;
   private char[] data;
   private Date submittedDate;

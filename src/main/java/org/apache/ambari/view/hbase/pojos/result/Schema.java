@@ -16,8 +16,11 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.pojos;
+package org.apache.ambari.view.hbase.pojos.result;
 
-public class Table {
+import lombok.Data;
 
+@Data
+public class Schema {
+  public String name;
 }

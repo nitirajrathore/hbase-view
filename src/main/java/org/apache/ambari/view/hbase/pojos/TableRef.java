@@ -16,11 +16,20 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.jobs.types;
+package org.apache.ambari.view.hbase.pojos;
 
-public enum PhoenixQueryType {
-  GENERIC,
-  CREATE_TABLE,
-  CREATE_SCHEMA,
-  ALTER_TABLE
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.apache.ambari.view.hbase.jobs.Query;
+
+@Data
+@NoArgsConstructor
+public class TableRef implements Query {
+  private String schemaName;
+  private String tableName;
+
+  @Override
+  public String getQuery() {
+    return "\"" + this.getSchemaName() + "." + this.getTableName() + "\"";
+  }
 }

@@ -26,16 +26,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-public class ConfiguratorImpl implements Configurator{
+public class ConfiguratorImpl implements Configurator {
 
   private final Properties properties;
   private final PhoenixConfig phoenixConfig;
 
-  public ConfiguratorImpl(Properties properties){
+  public ConfiguratorImpl(Properties properties) {
     this.properties = properties;
     Enumeration<?> propertyNames = properties.propertyNames();
-    Map<String,String> map = new HashMap();
-    while(propertyNames.hasMoreElements()){
+    Map<String, String> map = new HashMap();
+    while (propertyNames.hasMoreElements()) {
       String key = (String) propertyNames.nextElement();
       map.put(key, properties.getProperty(key));
     }

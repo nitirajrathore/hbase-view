@@ -18,13 +18,13 @@
 
 package org.apache.ambari.view.hbase.rest;
 
-import org.apache.ambari.view.hbase.core.PhoenixException;
+import org.apache.ambari.view.hbase.core.service.internal.PhoenixException;
 import org.apache.ambari.view.hbase.core.ViewException;
 import org.apache.ambari.view.hbase.core.service.ServiceException;
 import org.apache.ambari.view.hbase.jobs.impl.AlterTableJob;
 import org.apache.ambari.view.hbase.jobs.impl.CreateTableJob;
 import org.apache.ambari.view.hbase.jobs.impl.GetTablesJob;
-import org.apache.ambari.view.hbase.pojos.Table;
+import org.apache.ambari.view.hbase.pojos.TableRef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +47,7 @@ public class DDLRestService extends BaseRestService{
 
   @GET
   @Path("/")
-  public List<Table> getAllTables(){
+  public List<TableRef> getAllTables(){
     try {
 //      return getJobService().getTables(new GetTablesJob(null, null, null));
       return getJobService().getTablesActor(new GetTablesJob(null,null,null));

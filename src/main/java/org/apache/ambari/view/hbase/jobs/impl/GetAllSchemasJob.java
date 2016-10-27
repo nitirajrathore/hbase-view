@@ -16,28 +16,15 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.jobs;
+package org.apache.ambari.view.hbase.jobs.impl;
 
-import java.util.Date;
+import lombok.Data;
+import org.apache.ambari.view.hbase.jobs.ExecutablePhoenixJob;
+import org.apache.ambari.view.hbase.jobs.result.GetAllSchemasJobResult;
 
-public interface JobInfo {
-  Date getSubmittedDate();
-
-  char[] getData();
-
-  Long getDuration();
-
-  String getOwner();
-
-  void setOwner(String owner);
-
-  void setSubmittedDate(Date submittedDate);
-
-  void setDuration(Long duration);
-
-  void setData(char[] data);
-
-  void setJobType(String type);
-
-  String getJobType();
+@Data
+public class GetAllSchemasJob extends ExecutablePhoenixJob<GetAllSchemasJobResult> {
+  public GetAllSchemasJob() {
+    super(new GetAllSchemasJobResult(), false);
+  }
 }

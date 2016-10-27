@@ -53,20 +53,18 @@ public class AmbariStorage implements Storage {
     this.context = context;
   }
 
-  private void preprocessEntity(Indexed obj) {
+  private void preprocessEntity(Indexed obj) throws PersistenceException {
     cleanTransientFields(obj);
   }
 
-  private void cleanTransientFields(Indexed obj) {
+  private void cleanTransientFields(Indexed obj) throws PersistenceException {
     for (Method m : obj.getClass().getMethods()) {
       Transient aTransient = m.getAnnotation(Transient.class);
       if (aTransient != null && m.getName().startsWith("set")) {
         try {
           m.invoke(obj, new Object[]{null});
-        } catch (IllegalAccessException e) {
-          throw new ServiceFormattedException("S030 Data storage error", e);
-        } catch (InvocationTargetException e) {
-          throw new ServiceFormattedException("S030 Data storage error", e);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+          throw new PersistenceException(String.format("Error while storing %s", obj), e);
         }
       }
     }

@@ -16,23 +16,11 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.jobs.impl;
-
-import org.apache.ambari.view.hbase.jobs.JobInfo;
+package org.apache.ambari.view.hbase.core.persistence;
 
 public abstract class JobInfoImpl implements JobInfo {
 
   public JobInfoImpl() {
 
   }
-
-//  @Override
-//  public Character[] getData() {
-//    return data;
-//  }
-//
-//  @Override
-//  public void setData(Character[] data) {
-//    this.data = data;
-//  }
 }

@@ -42,7 +42,7 @@
         <name>phoenixJob</name>
         <plural-name>phoenixJobs</plural-name>
         <id-property>id</id-property>
-        <resource-class>org.apache.ambari.view.hbase.jobs.PhoenixJob</resource-class>
+        <resource-class>org.apache.ambari.view.hbase.core.persistence.PhoenixJob</resource-class>
         <provider-class>org.apache.ambari.view.hbase.ambari.PhoenixJobResourceProvider</provider-class>
         <service-class>org.apache.ambari.view.hbase.rest.PhoenixJobRestService</service-class>
     </resource>
@@ -59,7 +59,7 @@
 
     <persistence>
         <entity>
-            <class>org.apache.ambari.view.hbase.jobs.PhoenixJob</class>
+            <class>org.apache.ambari.view.hbase.core.persistence.PhoenixJob</class>
             <id-property>id</id-property>
         </entity>
     </persistence>

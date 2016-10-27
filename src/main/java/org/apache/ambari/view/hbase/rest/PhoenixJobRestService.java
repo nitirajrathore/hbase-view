@@ -21,8 +21,8 @@ package org.apache.ambari.view.hbase.rest;
 import org.apache.ambari.view.hbase.core.ViewException;
 import org.apache.ambari.view.hbase.core.persistence.PersistenceException;
 import org.apache.ambari.view.hbase.core.service.ServiceException;
-import org.apache.ambari.view.hbase.jobs.JobInfo;
-import org.apache.ambari.view.hbase.jobs.PhoenixJob;
+import org.apache.ambari.view.hbase.core.persistence.JobInfo;
+import org.apache.ambari.view.hbase.core.persistence.PhoenixJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +68,7 @@ public class PhoenixJobRestService extends BaseRestService {
 //    PhoenixJobService phoenixJobService = serviceFactory.getJobService();
 //    LOG.info("PhoenixJobService : {} ", phoenixJobService);
 //
-//    String id = phoenixJobService.submitPhoenixJob(phoenixJob);
+//    String id = phoenixJobService.submitAsyncPhoenixJob(phoenixJob);
 //    return id;
 
     return null;

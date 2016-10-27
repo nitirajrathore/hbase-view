@@ -1,10 +1,4 @@
-package org.apache.ambari.view.hbase.core.service.impl;
-
-import org.apache.ambari.view.hbase.core.persistence.FilteringStrategy;
-import org.apache.ambari.view.hbase.core.persistence.ItemNotFoundException;
-import org.apache.ambari.view.hbase.core.persistence.PersistenceException;
-import org.apache.ambari.view.hbase.core.persistence.PersistentResource;
-import org.apache.ambari.view.hbase.core.persistence.Storage;
+package org.apache.ambari.view.hbase.core.persistence;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -21,7 +15,7 @@ public class StorageImpl implements Storage {
 
   private final EntityManagerFactory entityManagerFactory;
 
-  public StorageImpl(EntityManagerFactory entityManagerFactory){
+  public StorageImpl(EntityManagerFactory entityManagerFactory) {
     this.entityManagerFactory = entityManagerFactory;
   }
 

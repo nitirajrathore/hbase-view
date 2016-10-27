@@ -18,7 +18,5 @@
 
 package org.apache.ambari.view.hbase.jobs;
 
-public interface QueryJob {
-  String getQuery();
-  void setQuery(String query);
+public interface QueryJob extends Query{
 }

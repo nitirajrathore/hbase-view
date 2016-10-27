@@ -18,53 +18,11 @@
 
 package org.apache.ambari.view.hbase.core.service;
 
-import org.apache.ambari.view.hbase.core.PhoenixException;
-import org.apache.ambari.view.hbase.core.ViewException;
 import org.apache.ambari.view.hbase.core.configs.PhoenixConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.ambari.view.hbase.core.service.internal.PhoenixException;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
-public class PhoenixConnectionManager {
-  private final static Logger LOG =
-    LoggerFactory.getLogger(PhoenixConnectionManager.class);
-  private static PhoenixConnectionManager manager;
-
-  public Connection getConnection(PhoenixConfig configs) throws PhoenixException {
-    String url = configs.getUrl();
-    try {
-      return DriverManager.getConnection(url);
-    } catch (SQLException e) {
-      LOG.error("Error while creating phoenix connection : ", e);
-      throw new PhoenixException(String.format("Cannot get connection of url : %s", url));
-    }catch (Exception e) {
-      LOG.error("Error while creating phoenix connection : ", e);
-      throw new PhoenixException(String.format("Cannot get connection of url : %s", url));
-    }
-  }
-
-  public static PhoenixConnectionManager getInstance() throws ViewException {
-    if( null == manager ){
-      synchronized (PhoenixConnectionManager.class){
-        if(null == manager){
-          manager = new PhoenixConnectionManager();
-          try {
-//            Class<?> klass = Class.forName("org.apache.calcite.avatica.remote.Driver");
-//            LOG.info("klass : {}" , klass);
-            Class<?> klass2 = Class.forName("org.apache.phoenix.queryserver.client.Driver");
-//            LOG.info("klass2 : {}" , klass2);
-          } catch (ClassNotFoundException e) {
-            LOG.error("Cannot register the phoenix Driver", e);
-            throw new ViewException(e);
-          }
-
-        }
-      }
-    }
-
-    return manager;
-  }
+public interface PhoenixConnectionManager {
+  Connection getConnection(PhoenixConfig configs) throws PhoenixException;
 }

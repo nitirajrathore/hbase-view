@@ -16,11 +16,28 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.jobs.types;
+package org.apache.ambari.view.hbase.core.persistence;
 
-public enum DatabaseQueryType {
-  CREATE_JOB,
-  FETCH_JOB_STATUS,
-  UPDATE_JOB,
-  FETCH_JOB
+import java.util.Date;
+
+public interface JobInfo {
+  Date getSubmittedDate();
+
+  char[] getData();
+
+  Long getDuration();
+
+  String getOwner();
+
+  void setOwner(String owner);
+
+  void setSubmittedDate(Date submittedDate);
+
+  void setDuration(Long duration);
+
+  void setData(char[] data);
+
+  void setJobType(String type);
+
+  String getJobType();
 }

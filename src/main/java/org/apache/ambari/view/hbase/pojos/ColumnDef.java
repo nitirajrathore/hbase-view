@@ -16,11 +16,27 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.jobs.types;
+package org.apache.ambari.view.hbase.pojos;
 
-public enum JobType {
-  PHOENIX_JOB,
-  HBASE_JOB,
-  DATABASE_JOB,
-  MULTIPLE_JOB
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.apache.ambari.view.hbase.jobs.Query;
+
+@Data
+@NoArgsConstructor
+public class ColumnDef implements Query {
+  private ColumnRef columnRef;
+  private DataType dataType;
+  private Integer precisionInt;
+  private Integer scaleInt;
+  private boolean isArray;
+  private Integer dimensionInt;
+  private boolean isNotNull;
+
+  @Override
+  public String getQuery() {
+    return columnRef.getQuery() + " " + dataType.name() + " " + (isNotNull ? "NOT NULL " : "NULL ")
+      + (null != precisionInt ? " (" + precisionInt : "") + ( null != scaleInt ? "," + scaleInt + ") " : "")
+      + (isArray ? "ARRAY " : "") + (null != dimensionInt ? " [" + dimensionInt + "]" : "" );
+  }
 }

@@ -28,9 +28,8 @@ import org.apache.ambari.view.UnsupportedPropertyException;
 import org.apache.ambari.view.ViewContext;
 import org.apache.ambari.view.hbase.core.persistence.ItemNotFoundException;
 import org.apache.ambari.view.hbase.core.persistence.PersistenceException;
+import org.apache.ambari.view.hbase.core.persistence.PhoenixJob;
 import org.apache.ambari.view.hbase.core.persistence.ResourceManager;
-import org.apache.ambari.view.hbase.jobs.IPhoenixJob;
-import org.apache.ambari.view.hbase.jobs.PhoenixJob;
 import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +42,7 @@ import java.util.Set;
 /**
  * Resource provider for IPhoenixJob
  */
-public class PhoenixJobResourceProvider implements ResourceProvider<IPhoenixJob> {
+public class PhoenixJobResourceProvider implements ResourceProvider<PhoenixJob> {
   protected final static Logger LOG =
     LoggerFactory.getLogger(PhoenixJobResourceProvider.class);
 
@@ -55,7 +54,7 @@ public class PhoenixJobResourceProvider implements ResourceProvider<IPhoenixJob>
   protected ResourceManager<PhoenixJob> getResourceManager() {
     if (null == persistentResourceManager) {
       synchronized (this) {
-        if(null == persistentResourceManager)
+        if (null == persistentResourceManager)
           persistentResourceManager = new ResourceManager<>(PhoenixJob.class, new AmbariStorage(new SafeViewContext(this.context)));
       }
     }
@@ -63,7 +62,7 @@ public class PhoenixJobResourceProvider implements ResourceProvider<IPhoenixJob>
   }
 
   @Override
-  public IPhoenixJob getResource(String resourceId, Set<String> properties) throws NoSuchResourceException {
+  public PhoenixJob getResource(String resourceId, Set<String> properties) throws NoSuchResourceException {
     try {
       return getResourceManager().read(resourceId);
     } catch (PersistenceException e) {
@@ -73,9 +72,9 @@ public class PhoenixJobResourceProvider implements ResourceProvider<IPhoenixJob>
   }
 
   @Override
-  public Set<IPhoenixJob> getResources(ReadRequest readRequest) throws NoSuchResourceException {
+  public Set<PhoenixJob> getResources(ReadRequest readRequest) throws NoSuchResourceException {
     try {
-      return new HashSet<IPhoenixJob>(getResourceManager().readAll(null));
+      return new HashSet<PhoenixJob>(getResourceManager().readAll());
     } catch (PersistenceException e) {
       throw new NoSuchResourceException("Error while reading all resources.");
     }
@@ -88,7 +87,7 @@ public class PhoenixJobResourceProvider implements ResourceProvider<IPhoenixJob>
       BeanUtils.populate(item, stringObjectMap);
       getResourceManager().create(item);
     } catch (IllegalAccessException | InvocationTargetException e) {
-      throw new UnsupportedPropertyException(PhoenixJob.class.toString(),stringObjectMap.keySet());
+      throw new UnsupportedPropertyException(PhoenixJob.class.toString(), stringObjectMap.keySet());
     } catch (PersistenceException e) {
       throw new SystemException(e.getMessage(), e);
     }

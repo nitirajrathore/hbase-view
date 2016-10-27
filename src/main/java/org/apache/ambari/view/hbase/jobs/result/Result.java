@@ -16,15 +16,12 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.jobs;
+package org.apache.ambari.view.hbase.jobs.result;
 
-import org.apache.ambari.view.hbase.core.service.internal.PhoenixException;
+import org.apache.ambari.view.hbase.core.ViewException;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 
-public interface IPhoenixJob {
-  void setResultSet(ResultSet rs);
-
-  Connection getPhoenixConnection() throws PhoenixException;
+public interface Result<T extends Result> {
+  T populateFromResultSet( ResultSet rs) throws ViewException;
 }

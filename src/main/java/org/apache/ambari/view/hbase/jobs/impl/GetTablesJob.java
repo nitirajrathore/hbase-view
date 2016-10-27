@@ -18,18 +18,25 @@
 
 package org.apache.ambari.view.hbase.jobs.impl;
 
+import org.apache.ambari.view.hbase.core.service.internal.PhoenixException;
 import org.apache.ambari.view.hbase.jobs.IPhoenixJob;
 import org.apache.ambari.view.hbase.jobs.Job;
+import org.apache.ambari.view.hbase.jobs.result.GetTablesJobResult;
 
-public class GetTablesJob extends Job implements IPhoenixJob {
+import java.sql.Connection;
+import java.sql.ResultSet;
+
+public class GetTablesJob extends Job<GetTablesJobResult> implements IPhoenixJob {
   private String catalog;
   private String schemaPattern;
   private String tableNamePattern;
 
   public GetTablesJob() {
+    super(new GetTablesJobResult(), false);
   }
 
   public GetTablesJob(String catalog, String schemaPattern, String tableNamePattern) {
+    super(new GetTablesJobResult(), false);
     this.catalog = catalog;
     this.schemaPattern = schemaPattern;
     this.tableNamePattern = tableNamePattern;
@@ -62,5 +69,20 @@ public class GetTablesJob extends Job implements IPhoenixJob {
   @Override
   public char[] serializeData() {
     return new char[0];
+  }
+
+  @Override
+  public GetTablesJobResult getResult() {
+    return null;
+  }
+
+  @Override
+  public void setResultSet(ResultSet rs) {
+
+  }
+
+  @Override
+  public Connection getPhoenixConnection() throws PhoenixException {
+    return null;
   }
 }

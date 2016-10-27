@@ -16,15 +16,30 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.jobs;
+package org.apache.ambari.view.hbase.pojos;
 
-import org.apache.ambari.view.hbase.core.service.internal.PhoenixException;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-
-public interface IPhoenixJob {
-  void setResultSet(ResultSet rs);
-
-  Connection getPhoenixConnection() throws PhoenixException;
+public enum DataType {
+  CHAR,
+  VARCHAR,
+  DECIMAL,
+  TINYINT,
+  SMALLINT,
+  INTEGER,
+  BIGINT,
+  FLOAT,
+  DOUBLE,
+  TIMESTAMP,
+  DATE,
+  TIME,
+  BINARY,
+  VARBINARY,
+  UNSIGNED_TIMESTAMP,
+  UNSIGNED_DATE,
+  UNSIGNED_TIME,
+  UNSIGNED_TINYINT,
+  UNSIGNED_SMALLINT,
+  UNSIGNED_INT,
+  UNSIGNED_LONG,
+  UNSIGNED_FLOAT,
+  UNSIGNED_DOUBLE;
 }

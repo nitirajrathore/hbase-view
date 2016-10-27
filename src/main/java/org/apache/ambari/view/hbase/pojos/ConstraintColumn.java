@@ -16,8 +16,20 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.jobs;
+package org.apache.ambari.view.hbase.pojos;
 
-public interface HbaseJob extends JobInfo {
+import lombok.Data;
+import org.apache.ambari.view.hbase.jobs.Query;
 
+@Data
+public class ConstraintColumn implements Query {
+  private String columnName;
+  private Order order;
+  private boolean isRowTimestamp;
+
+  @Override
+  public String getQuery() {
+    return "\"" + this.getColumnName() + "\"" + ( null != order ? order.name() : "" ) +
+      (isRowTimestamp ? "ROW_TIMESTAMP" : "") ;
+  }
 }

@@ -6,7 +6,7 @@
 
   <description>XML Mapping file</description>
   <package>org.apache.ambari.view.hbase.jobs</package>
-  <entity class="org.apache.ambari.view.hbase.jobs.PhoenixJob">
+  <entity class="org.apache.ambari.view.hbase.core.persistence.PhoenixJob">
     <table name="phoenix_jobs"/>
     <attributes>
       <id name="id">

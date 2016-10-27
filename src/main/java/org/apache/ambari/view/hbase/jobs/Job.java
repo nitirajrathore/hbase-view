@@ -18,16 +18,22 @@
 
 package org.apache.ambari.view.hbase.jobs;
 
-public class Job {
+import org.apache.ambari.view.hbase.core.ViewException;
+import org.apache.ambari.view.hbase.core.service.internal.ViewServiceFactory;
+import org.apache.ambari.view.hbase.jobs.result.Result;
 
-  public Job() {
+public abstract class Job<T extends Result<T>, P> {
+  private ViewServiceFactory viewServiceFactory;
+
+  private boolean async;
+  private P persistentResource;
+
+  private T result;
+  protected Job( T result, boolean isAsync ) {
+    this.result = result;
+    this.async = isAsync;
   }
 
-  public Job(boolean isAysnc) {
-    this.isAysnc = isAysnc;
-  }
-
-  public boolean isAysnc;
 
   public char[] serializeData() {
     return null;
@@ -38,6 +44,29 @@ public class Job {
   }
 
   public boolean isAsync() {
-    return isAysnc;
+    return async;
+  }
+
+  protected T getResultObject(){
+    return result;
+  }
+
+  abstract public  T getResult() throws ViewException;
+
+  public ViewServiceFactory getViewServiceFactory() {
+    return viewServiceFactory;
+  }
+
+  public void setViewServiceFactory(ViewServiceFactory viewServiceFactory) {
+    if( null != viewServiceFactory) // this can only be set once.
+      this.viewServiceFactory = viewServiceFactory;
+  }
+
+  public P getPersistentResource() {
+    return persistentResource;
+  }
+
+  public void setPersistentResource(P persistentResource) {
+    this.persistentResource = persistentResource;
   }
 }

@@ -18,39 +18,28 @@
 
 package org.apache.ambari.view.hbase.core.service;
 
-import akka.actor.ActorRef;
-import akka.util.Timeout;
-import com.google.common.base.Optional;
-import org.apache.ambari.view.hbase.actors.PhoenixJobActor;
-import org.apache.ambari.view.hbase.core.PhoenixException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ambari.view.hbase.core.ViewException;
+import org.apache.ambari.view.hbase.core.persistence.JobInfo;
 import org.apache.ambari.view.hbase.core.persistence.PersistenceException;
+import org.apache.ambari.view.hbase.core.persistence.PhoenixJob;
+import org.apache.ambari.view.hbase.core.service.internal.PhoenixException;
+import org.apache.ambari.view.hbase.core.service.internal.ViewServiceFactory;
 import org.apache.ambari.view.hbase.jobs.IPhoenixJob;
 import org.apache.ambari.view.hbase.jobs.Job;
-import org.apache.ambari.view.hbase.jobs.JobInfo;
-import org.apache.ambari.view.hbase.jobs.PhoenixJob;
 import org.apache.ambari.view.hbase.jobs.impl.CreateTableJob;
+import org.apache.ambari.view.hbase.jobs.impl.GetAllSchemasJob;
 import org.apache.ambari.view.hbase.jobs.impl.GetTablesJob;
-import org.apache.ambari.view.hbase.pojos.Table;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import scala.concurrent.Await;
-import scala.concurrent.Future;
-import scala.concurrent.duration.Duration;
+import org.apache.ambari.view.hbase.jobs.result.GetAllSchemasJobResult;
+import org.apache.ambari.view.hbase.pojos.TableRef;
+import org.apache.ambari.view.hbase.pojos.result.Schema;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
-import static akka.pattern.Patterns.ask;
-
+@Slf4j
 public class JobService {
-  private final static Logger LOG =
-    LoggerFactory.getLogger(JobService.class);
-
   private final ViewServiceFactory factory;
 
   public JobService(ViewServiceFactory factory) {
@@ -59,54 +48,54 @@ public class JobService {
 
 //  public String submitJob(JobInfo job) throws ServiceException {
 //    if (job instanceof IPhoenixJob)
-//      return factory.getPhoenixService().submitPhoenixJob((IPhoenixJob) job);
+//      return factory.getPhoenixService().submitAsyncPhoenixJob((IPhoenixJob) job);
 //    else throw new ServiceException("Illegal Argument");
 //  }
 
   public String submitJob(Job job) throws ServiceException {
     if (job instanceof IPhoenixJob)
-      return factory.getPhoenixService().submitPhoenixJob(job);
+      return factory.getPhoenixJobService().submitAsyncPhoenixJob(job);
     else throw new ServiceException("Illegal Argument");
   }
 
-  public List<Table> getTables(GetTablesJob getTablesJob) throws ServiceException, ViewException, PhoenixException {
-    List<Table> tables = new LinkedList<Table>();
-    try {
-      try (
-        Connection connection = PhoenixConnectionManager.getInstance()
-          .getConnection(factory.getConfigurator().getPhoenixConfig())
-      ) {
-        Optional<ResultSet> result = factory.getPhoenixService().submitSyncJob(connection, getTablesJob);
-        if (result.isPresent()) {
-          tables.addAll(convertToTable(result.get()));
-        } else throw new ServiceException("Tables not found.");
-      }
-    } catch (SQLException e) {
-      LOG.error("Error while closing connection.", e);
-    }
-
-    return tables;
+  public List<TableRef> getTables(GetTablesJob getTablesJob) throws ServiceException, ViewException, PhoenixException {
+//    List<TableRef> tables = new LinkedList<TableRef>();
+//    try {
+//      try (
+//        Connection connection = PhoenixConnectionManagerImpl.getInstance()
+//          .getConnection(factory.getConfigurator().getPhoenixConfig())
+//      ) {
+//        Optional<ResultSet> result = factory.getPhoenixJobService().submitSyncJob(getTablesJob);
+//        if (result.isPresent()) {
+//          tables.addAll(convertToTable(result.get()));
+//        } else throw new ServiceException("Tables not found.");
+//      }
+//    } catch (SQLException e) {
+//      LOG.error("Error while closing connection.", e);
+//    }
+//
+    return null;
   }
 
-  public List<Table> getTablesActor(GetTablesJob getTablesJob) throws ServiceException, ViewException, PhoenixException {
-    List<Table> tables = new LinkedList<Table>();
-    try {
-      try (
-        Connection connection = PhoenixConnectionManager.getInstance()
-          .getConnection(factory.getConfigurator().getPhoenixConfig())
-      ) {
-        ActorRef actorRef = factory.getActorSystem().actorOf(PhoenixJobActor.props(factory, connection));
-        Timeout timeout = new Timeout(Duration.create(5000, "seconds"));
-        Future<Object> future = ask(actorRef, getTablesJob, timeout);
-        try {
-          Optional<ResultSet> optionalResult = (Optional<ResultSet>) Await.result(future, timeout.duration());
-          if (optionalResult.isPresent()) {
-            tables.addAll(convertToTable(optionalResult.get()));
-          } else throw new ServiceException("Tables not found.");
-        } catch (Exception e) {
-          LOG.error("Error while getting results.", e);
-          throw new ViewException(e);
-        }
+  public List<TableRef> getTablesActor(GetTablesJob getTablesJob) throws ServiceException, ViewException, PhoenixException {
+//    List<TableRef> tables = new LinkedList<TableRef>();
+//    try {
+//      try (
+//        Connection connection = PhoenixConnectionManagerImpl.getInstance()
+//          .getConnection(factory.getConfigurator().getPhoenixConfig())
+//      ) {
+//        ActorRef actorRef = factory.getActorSystem().actorOf(PhoenixJobActor.props(factory));
+//        Timeout timeout = new Timeout(Duration.create(5000, "seconds"));
+//        Future<Object> future = ask(actorRef, getTablesJob, timeout);
+//        try {
+//          Optional<ResultSet> optionalResult = (Optional<ResultSet>) Await.result(future, timeout.duration());
+//          if (optionalResult.isPresent()) {
+//            tables.addAll(convertToTable(optionalResult.get()));
+//          } else throw new ServiceException("Tables not found.");
+//        } catch (Exception e) {
+//          log.error("Error while getting results.", e);
+//          throw new ViewException(e);
+//        }
 
 //        Future<ResultSet> future = ask(actorRef, getTablesJob, 50000).mapTo(new ClassTag<ResultSet>());
 //        Option<Try<Object>> result = future.value();
@@ -116,52 +105,54 @@ public class JobService {
 //          if(optionalResult.isPresent())
 //            tables.addAll(convertToTable(optionalResult.get()));
 //        } else throw new ServiceException("Tables not found.");
-      }
-    } catch (SQLException e) {
-      LOG.error("Error while closing connection.", e);
-    }
+//      }
+//    } catch (SQLException e) {
+//      LOG.error("Error while closing connection.", e);
+//    }
 
-    return tables;
+    return null;
   }
 
-  public List<Table> createTable(CreateTableJob createTableJob) throws ServiceException, ViewException, PhoenixException {
-    List<Table> tables = new LinkedList<Table>();
-    try {
-      try (
-        Connection connection = PhoenixConnectionManager.getInstance()
-          .getConnection(factory.getConfigurator().getPhoenixConfig())
-      ) {
-        ActorRef actorRef = factory.getActorSystem().actorOf(PhoenixJobActor.props(factory, connection));
-        Timeout timeout = new Timeout(Duration.create(5, "seconds"));
-        Future<Object> future = ask(actorRef, createTableJob, timeout);
-        try {
-          Optional<ResultSet> optionalResult = (Optional<ResultSet>) Await.result(future, timeout.duration());
-          if (optionalResult.isPresent()) {
-            tables.addAll(convertToTable(optionalResult.get()));
-          } else throw new ServiceException("Tables not found.");
-        } catch (Exception e) {
-          LOG.error("Error while getting results.", e);
-          throw new ViewException(e);
-        }
-
-//        Future<ResultSet> future = ask(actorRef, getTablesJob, 50000).mapTo(new ClassTag<ResultSet>());
-//        Option<Try<Object>> result = future.value();
-//        if (result.nonEmpty()) {
-//          Try<Object> res = result.get();
-//          Optional<ResultSet> optionalResult = (Optional<ResultSet>) res.get();
-//          if(optionalResult.isPresent())
+  public List<TableRef> createTable(CreateTableJob createTableJob) throws ServiceException, ViewException, PhoenixException {
+//    List<TableRef> tables = new LinkedList<TableRef>();
+//    try {
+//      try (
+//        Connection connection = PhoenixConnectionManagerImpl.getInstance()
+//          .getConnection(factory.getConfigurator().getPhoenixConfig())
+//      ) {
+//        ActorRef actorRef = factory.getActorSystem().actorOf(PhoenixJobActor.props(factory));
+//        Timeout timeout = new Timeout(Duration.create(5, "seconds"));
+//        Future<Object> future = ask(actorRef, createTableJob, timeout);
+//        try {
+//          Optional<ResultSet> optionalResult = (Optional<ResultSet>) Await.result(future, timeout.duration());
+//          if (optionalResult.isPresent()) {
 //            tables.addAll(convertToTable(optionalResult.get()));
-//        } else throw new ServiceException("Tables not found.");
-      }
-    } catch (SQLException e) {
-      LOG.error("Error while closing connection.", e);
-    }
+//          } else throw new ServiceException("Tables not found.");
+//        } catch (Exception e) {
+//          LOG.error("Error while getting results.", e);
+//          throw new ViewException(e);
+//        }
+//
+////        Future<ResultSet> future = ask(actorRef, getTablesJob, 50000).mapTo(new ClassTag<ResultSet>());
+////        Option<Try<Object>> result = future.value();
+////        if (result.nonEmpty()) {
+////          Try<Object> res = result.get();
+////          Optional<ResultSet> optionalResult = (Optional<ResultSet>) res.get();
+////          if(optionalResult.isPresent())
+////            tables.addAll(convertToTable(optionalResult.get()));
+////        } else throw new ServiceException("Tables not found.");
+//      }
+//    } catch (SQLException e) {
+//      LOG.error("Error while closing connection.", e);
+//    }
+//
+//    return tables;
 
-    return tables;
+    return null;
   }
 
-  private List<Table> convertToTable(ResultSet resultSet) {
-    return new ArrayList<Table>();
+  private List<TableRef> convertToTable(ResultSet resultSet) {
+    return new ArrayList<TableRef>();
   }
 
   public JobInfo getJob(String id) throws JobNotFoundException, ServiceException {
@@ -173,4 +164,8 @@ public class JobService {
     return new ArrayList<JobInfo>(jobs);
   }
 
+  public List<Schema> getAllSchemas(GetAllSchemasJob getAllSchemasJob) throws ServiceException, PhoenixException {
+    GetAllSchemasJobResult result = this.factory.getPhoenixJobService().submitSyncJob(getAllSchemasJob);
+    return result.getSchemas();
+  }
 }

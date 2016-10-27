@@ -16,9 +16,8 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.core;
+package org.apache.ambari.view.hbase.core.service.internal;
 
-import com.google.common.base.Optional;
 import org.apache.ambari.view.hbase.jobs.QueryJob;
 import org.apache.ambari.view.hbase.jobs.impl.GetTablesJob;
 
@@ -30,11 +29,20 @@ import java.sql.Statement;
 public class PhoenixJobHelper {
   private static final String TABLES = "TABLE";
 
-  public Optional<ResultSet> getTables(Connection connection, GetTablesJob getTablesJob) throws PhoenixException {
+  public ResultSet getTables(Connection connection, GetTablesJob getTablesJob) throws PhoenixException {
     try {
       ResultSet rs = connection.getMetaData().getTables(getTablesJob.getCatalog(), getTablesJob.getSchemaPattern(),
         getTablesJob.getTableNamePattern(), new String[]{TABLES});
-      return Optional.fromNullable(rs);
+      return rs;
+    } catch (SQLException e) {
+      throw new PhoenixException(e);
+    }
+  }
+
+  public ResultSet getSchemas(Connection connection) throws PhoenixException {
+    try {
+      ResultSet rs = connection.getMetaData().getSchemas();
+      return rs;
     } catch (SQLException e) {
       throw new PhoenixException(e);
     }
@@ -44,4 +52,10 @@ public class PhoenixJobHelper {
     Statement statement = connection.createStatement();
     return statement.execute(job.getQuery());
   }
+
+  public ResultSet executeQuery(Connection connection, QueryJob job) throws SQLException {
+    Statement statement = connection.createStatement();
+    return statement.executeQuery(job.getQuery());
+  }
+
 }

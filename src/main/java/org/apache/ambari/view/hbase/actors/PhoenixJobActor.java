@@ -6,35 +6,28 @@ import akka.actor.Props;
 import akka.actor.Status;
 import akka.japi.pf.FI;
 import akka.japi.pf.ReceiveBuilder;
-import com.google.common.base.Optional;
-import org.apache.ambari.view.hbase.core.PhoenixJobHelper;
-import org.apache.ambari.view.hbase.core.service.ViewServiceFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.ambari.view.hbase.core.persistence.PhoenixJob;
+import org.apache.ambari.view.hbase.core.service.internal.PhoenixException;
+import org.apache.ambari.view.hbase.core.service.internal.PhoenixJobHelper;
+import org.apache.ambari.view.hbase.jobs.ExecutablePhoenixJob;
 import org.apache.ambari.view.hbase.jobs.Job;
-import org.apache.ambari.view.hbase.jobs.PhoenixJob;
 import org.apache.ambari.view.hbase.jobs.QueryJob;
+import org.apache.ambari.view.hbase.jobs.impl.GetAllSchemasJob;
 import org.apache.ambari.view.hbase.jobs.impl.GetTablesJob;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import scala.PartialFunction;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.Date;
 
+@Slf4j
 public class PhoenixJobActor extends AbstractActor {
-  private final static Logger LOG =
-    LoggerFactory.getLogger(PhoenixJobActor.class);
-
-  private final Connection connection;
-  private final ViewServiceFactory viewServiceFactory;
-
-  public static Props props(ViewServiceFactory viewServiceFactory, Connection connection) {
-    return Props.create(PhoenixJobActor.class, viewServiceFactory, connection);
+  public static Props props() {
+    return Props.create(PhoenixJobActor.class);
   }
 
-  public PhoenixJobActor(ViewServiceFactory viewServiceFactory, Connection connection){
-    this.viewServiceFactory = viewServiceFactory;
-    this.connection = connection;
+  public PhoenixJobActor() {
   }
 
   public PartialFunction receive() {
@@ -42,24 +35,37 @@ public class PhoenixJobActor extends AbstractActor {
       match(GetTablesJob.class, new FI.UnitApply<GetTablesJob>() {
         @Override
         public void apply(GetTablesJob job) throws Exception {
-          Optional<ResultSet> resultSet = new PhoenixJobHelper().getTables(connection, job);
-          PhoenixJobActor.this.sender().tell(resultSet, ActorRef.noSender());
+//          Optional<ResultSet> resultSet = new PhoenixJobHelper().getTables(connection, job);
+//          PhoenixJobActor.this.sender().tell(resultSet, ActorRef.noSender());
         }
       }).
-      match(Job.class, new FI.UnitApply<Job>() {
+      match(GetAllSchemasJob.class, new FI.UnitApply<GetAllSchemasJob>() {
         @Override
-        public void apply(Job job) throws Exception {
-          LOG.info("Persisting : {}", job);
-          if( job.isAsync() ){
+        public void apply(GetAllSchemasJob job) throws Exception {
+          log.info("Executing {}", job);
+          Connection phoenixConnection = job.getPhoenixConnection();
+          Object result = executeJob(job, phoenixConnection);
+
+          PhoenixJobActor.this.sender().tell(result, ActorRef.noSender());
+        }
+      }).
+
+      match(ExecutablePhoenixJob.class, new FI.UnitApply<ExecutablePhoenixJob>() {
+        @Override
+        public void apply(ExecutablePhoenixJob job) throws Exception {
+          log.info("Persisting : {}", job);
+          if (job.isAsync()) {
             PhoenixJob phoenixJob = createPersistable(job);
-            PhoenixJob persistedJob = viewServiceFactory.getPhoenixResourceManager().create(phoenixJob);
-            LOG.info("Persisted Object : {}", job);
+            PhoenixJob persistedJob = job.getViewServiceFactory().getPhoenixResourceManager().create(phoenixJob);
+            job.setPersistentResource(persistedJob);
+            log.info("Persisted Object : {}", job);
             PhoenixJobActor.this.sender().tell(persistedJob.getId(), ActorRef.noSender());
           }
 
-          if( job instanceof QueryJob){
-            boolean executed = new PhoenixJobHelper().execute(connection, (QueryJob)job);
-            LOG.info("execution success? :{}", executed);
+          Connection phoenixConnection = job.getPhoenixConnection();
+          if (job instanceof QueryJob) {
+            ResultSet executed = new PhoenixJobHelper().executeQuery(phoenixConnection,(QueryJob) job);
+            log.info("execution success? :{}", executed);
           }
         }
       }).
@@ -72,6 +78,12 @@ public class PhoenixJobActor extends AbstractActor {
         }
       }).
       build();
+  }
+
+  private Object executeJob(GetAllSchemasJob job, Connection phoenixConnection) throws PhoenixException, org.apache.ambari.view.hbase.core.ViewException {
+    ResultSet resultSet = new PhoenixJobHelper().getSchemas(phoenixConnection);
+    job.setResultSet(resultSet);
+    return job.getResult();
   }
 
   private PhoenixJob createPersistable(Job job) {

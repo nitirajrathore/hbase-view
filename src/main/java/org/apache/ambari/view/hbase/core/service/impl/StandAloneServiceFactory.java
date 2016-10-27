@@ -18,12 +18,13 @@
 
 package org.apache.ambari.view.hbase.core.service.impl;
 
-import org.apache.ambari.view.hbase.core.internal.ViewActorSystem;
+import org.apache.ambari.view.hbase.core.ViewException;
 import org.apache.ambari.view.hbase.core.persistence.DatabaseServiceFactory;
+import org.apache.ambari.view.hbase.core.persistence.StorageImpl;
 import org.apache.ambari.view.hbase.core.service.Configurator;
 import org.apache.ambari.view.hbase.core.service.IServiceFactory;
 import org.apache.ambari.view.hbase.core.service.JobService;
-import org.apache.ambari.view.hbase.core.service.ViewServiceFactory;
+import org.apache.ambari.view.hbase.core.service.internal.ViewServiceFactory;
 
 import java.util.Properties;
 
@@ -32,10 +33,11 @@ public class StandAloneServiceFactory implements IServiceFactory {
   private Properties viewProperties;
   private JobService jobService;
   DatabaseServiceFactory dsf = DatabaseServiceFactory.getInstance();
-  public StandAloneServiceFactory(Properties viewProperties){
+
+  public StandAloneServiceFactory(Properties viewProperties) throws ViewException {
     this.viewProperties = viewProperties;
     configurator = new ConfiguratorImpl(viewProperties);
-    jobService = new JobService(new ViewServiceFactory(configurator, new StorageImpl(dsf.getEntityManagerFactory()), ViewActorSystem.get()));
+    jobService = new JobService( new ViewServiceFactory(configurator, new StorageImpl(dsf.getEntityManagerFactory()), PhoenixConnectionManagerImpl.getInstance()));
   }
 
   @Override

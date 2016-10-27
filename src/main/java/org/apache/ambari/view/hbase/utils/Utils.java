@@ -16,25 +16,27 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.core.internal;
+package org.apache.ambari.view.hbase.utils;
 
-import com.google.common.base.Optional;
-import org.apache.ambari.view.hbase.core.PhoenixException;
-import org.apache.ambari.view.hbase.core.service.JobNotFoundException;
-import org.apache.ambari.view.hbase.core.service.ServiceException;
-import org.apache.ambari.view.hbase.jobs.IPhoenixJob;
-import org.apache.ambari.view.hbase.jobs.Job;
-
-import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
-public interface PhoenixJobService {
-  String submitPhoenixJob(Job job) throws ServiceException;
+public class Utils {
+  public static List<List<Object>> getResultSetData(ResultSet rs) throws SQLException {
+    List<List<Object>> rows = new ArrayList<List<Object>>();
+    int rowCount = 1;
+    while (rs.next()) {
+      int numOfCols = rs.getMetaData().getColumnCount();
+      List<Object> row = new ArrayList<Object>(numOfCols);
+      for (int i = 1; i <= numOfCols; i++) {
+        row.add(rs.getObject(i));
+      }
+      rows.add(row);
+    }
 
-  IPhoenixJob getPhoenixJob(String id) throws JobNotFoundException, ServiceException;
+    return rows;
+  }
 
-  List<IPhoenixJob> getPhoenixJobs() throws ServiceException;
-
-  Optional<ResultSet> submitSyncJob(Connection connection, Job job) throws ServiceException, PhoenixException;
 }

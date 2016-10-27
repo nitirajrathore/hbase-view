@@ -16,15 +16,20 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.jobs;
+package org.apache.ambari.view.hbase.pojos;
 
-import org.apache.ambari.view.hbase.core.service.internal.PhoenixException;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.apache.ambari.view.hbase.jobs.Query;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
+@Data
+@NoArgsConstructor
+public class ColumnRef implements Query{
+  private String familyName;
+  private String columnName;
 
-public interface IPhoenixJob {
-  void setResultSet(ResultSet rs);
-
-  Connection getPhoenixConnection() throws PhoenixException;
+  @Override
+  public String getQuery() {
+    return "\"" + this.getFamilyName() + "." + columnName + "\"";
+  }
 }

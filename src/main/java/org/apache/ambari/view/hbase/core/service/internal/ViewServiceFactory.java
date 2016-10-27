@@ -16,43 +16,31 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.core.service;
+package org.apache.ambari.view.hbase.core.service.internal;
 
-import akka.actor.ActorSystem;
-import org.apache.ambari.view.hbase.core.internal.PhoenixJobService;
-import org.apache.ambari.view.hbase.core.internal.PhoenixJobServiceImpl;
+import lombok.Data;
 import org.apache.ambari.view.hbase.core.persistence.ResourceManager;
 import org.apache.ambari.view.hbase.core.persistence.Storage;
-import org.apache.ambari.view.hbase.jobs.PhoenixJob;
+import org.apache.ambari.view.hbase.core.service.Configurator;
+import org.apache.ambari.view.hbase.core.service.PhoenixConnectionManager;
+import org.apache.ambari.view.hbase.core.service.impl.PhoenixJobServiceImpl;
+import org.apache.ambari.view.hbase.core.persistence.PhoenixJob;
 
+@Data
 public class ViewServiceFactory {
   private final PhoenixJobService phoenixJobService;
-  private final ActorSystem actorSystem;
+  private final ViewActorSystem actorSystem;
   private final ResourceManager<PhoenixJob> phoenixResourceManager;
-  private Configurator configurator;
-  private Storage storage;
+  private final PhoenixConnectionManager phoenixConnectionManager;
+  private final Configurator configurator;
+  private final Storage storage;
 
-  public ResourceManager<PhoenixJob> getPhoenixResourceManager() {
-    return phoenixResourceManager;
-  }
-
-  public ViewServiceFactory(Configurator configurator, Storage storage, ActorSystem actorSystem) {
+  public ViewServiceFactory(Configurator configurator, Storage storage, PhoenixConnectionManager phoenixConnectionManager) {
     this.configurator = configurator;
     this.storage = storage;
-    this.actorSystem = actorSystem;
     this.phoenixResourceManager = new ResourceManager<PhoenixJob>( PhoenixJob.class, storage);
+    this.phoenixConnectionManager = phoenixConnectionManager;
     this.phoenixJobService = new PhoenixJobServiceImpl(this);
-  }
-
-  public ActorSystem getActorSystem() {
-    return actorSystem;
-  }
-
-  public PhoenixJobService getPhoenixService(){
-    return this.phoenixJobService;
-  }
-
-  public Configurator getConfigurator() {
-    return configurator;
+    this.actorSystem = ViewActorSystem.get();
   }
 }

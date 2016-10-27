@@ -16,10 +16,31 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.jobs;
+package org.apache.ambari.view.hbase.core.service.internal;
 
-public interface DatabaseJob extends JobInfo {
-  String getDatabaseQuery();
+import java.sql.SQLException;
 
-  String getDatabaseQueryType();
+public class PhoenixException extends Exception {
+  public PhoenixException(SQLException e) {
+    this((Throwable)e);
+  }
+
+  public PhoenixException() {
+  }
+
+  public PhoenixException(String message) {
+    super(message);
+  }
+
+  public PhoenixException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
+  public PhoenixException(Throwable cause) {
+    super(cause);
+  }
+
+  public PhoenixException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    super(message, cause, enableSuppression, writableStackTrace);
+  }
 }
