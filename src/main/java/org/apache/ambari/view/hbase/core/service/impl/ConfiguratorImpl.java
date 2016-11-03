@@ -18,6 +18,7 @@
 
 package org.apache.ambari.view.hbase.core.service.impl;
 
+import com.google.common.base.Optional;
 import org.apache.ambari.view.hbase.core.configs.PhoenixConfig;
 import org.apache.ambari.view.hbase.core.service.Configurator;
 
@@ -44,8 +45,8 @@ public class ConfiguratorImpl implements Configurator {
   }
 
   @Override
-  public String getProperty(String propertyName) {
-    return properties.getProperty(propertyName);
+  public Optional<String> getProperty(String propertyName) {
+    return Optional.fromNullable(properties.getProperty(propertyName));
   }
 
   @Override

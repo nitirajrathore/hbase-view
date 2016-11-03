@@ -7,68 +7,134 @@ import akka.actor.Status;
 import akka.japi.pf.FI;
 import akka.japi.pf.ReceiveBuilder;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ambari.view.hbase.core.JobStatus;
+import org.apache.ambari.view.hbase.core.ViewException;
 import org.apache.ambari.view.hbase.core.persistence.PhoenixJob;
 import org.apache.ambari.view.hbase.core.service.internal.PhoenixException;
 import org.apache.ambari.view.hbase.core.service.internal.PhoenixJobHelper;
-import org.apache.ambari.view.hbase.jobs.ExecutablePhoenixJob;
-import org.apache.ambari.view.hbase.jobs.Job;
+import org.apache.ambari.view.hbase.jobs.JobImpl;
 import org.apache.ambari.view.hbase.jobs.QueryJob;
+import org.apache.ambari.view.hbase.jobs.ResultSetQueryJob;
+import org.apache.ambari.view.hbase.jobs.UpdateQueryJob;
 import org.apache.ambari.view.hbase.jobs.impl.GetAllSchemasJob;
-import org.apache.ambari.view.hbase.jobs.impl.GetTablesJob;
+import org.apache.ambari.view.hbase.jobs.phoenix.AsyncPhoenixJob;
+import org.apache.ambari.view.hbase.jobs.phoenix.IPhoenixJob;
+import org.apache.ambari.view.hbase.jobs.phoenix.ResultableAsyncPhoenixJob;
+import org.apache.ambari.view.hbase.jobs.phoenix.SyncPhoenixJob;
+import org.apache.ambari.view.hbase.jobs.result.Result;
+import org.apache.ambari.view.hbase.jobs.result.UpdateResult;
+import org.apache.ambari.view.hbase.messages.HoldResultMessage;
 import scala.PartialFunction;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 
 @Slf4j
 public class PhoenixJobActor extends AbstractActor {
-  public static Props props() {
-    return Props.create(PhoenixJobActor.class);
+  private final ActorRef phoenixActor;
+
+  public static Props props(ActorRef phoenixActor) {
+    return Props.create(PhoenixJobActor.class, phoenixActor);
   }
 
-  public PhoenixJobActor() {
+  public PhoenixJobActor(ActorRef phoenixActor) {
+    this.phoenixActor = phoenixActor;
   }
 
   public PartialFunction receive() {
     return ReceiveBuilder.
-      match(GetTablesJob.class, new FI.UnitApply<GetTablesJob>() {
+
+      match(SyncPhoenixJob.class, new FI.UnitApply<SyncPhoenixJob>() {
         @Override
-        public void apply(GetTablesJob job) throws Exception {
-//          Optional<ResultSet> resultSet = new PhoenixJobHelper().getTables(connection, job);
-//          PhoenixJobActor.this.sender().tell(resultSet, ActorRef.noSender());
-        }
-      }).
-      match(GetAllSchemasJob.class, new FI.UnitApply<GetAllSchemasJob>() {
-        @Override
-        public void apply(GetAllSchemasJob job) throws Exception {
+        public void apply(SyncPhoenixJob job) throws Exception {
           log.info("Executing {}", job);
-          Connection phoenixConnection = job.getPhoenixConnection();
-          Object result = executeJob(job, phoenixConnection);
-
-          PhoenixJobActor.this.sender().tell(result, ActorRef.noSender());
+          Connection phoenixConnection = null;
+          try {
+            phoenixConnection = job.getPhoenixConnection();
+            executeJob(job, phoenixConnection);
+            Result result = job.getResult();
+            phoenixConnection.close();
+            PhoenixJobActor.this.sender().tell(result, ActorRef.noSender());
+          } catch (Exception e) {
+            log.error("exception occurred.", e);
+          } finally {
+            if (null != phoenixConnection && !phoenixConnection.isClosed()) {
+              try {
+                phoenixConnection.close();
+              } catch (Exception e) {
+                log.error("Error occurred while closing connection. {}", e.getMessage(), e);
+              }
+            }
+          }
         }
       }).
 
-      match(ExecutablePhoenixJob.class, new FI.UnitApply<ExecutablePhoenixJob>() {
+      match(AsyncPhoenixJob.class, new FI.UnitApply<AsyncPhoenixJob>() {
         @Override
-        public void apply(ExecutablePhoenixJob job) throws Exception {
+        public void apply(AsyncPhoenixJob job) throws Exception {
           log.info("Persisting : {}", job);
-          if (job.isAsync()) {
-            PhoenixJob phoenixJob = createPersistable(job);
-            PhoenixJob persistedJob = job.getViewServiceFactory().getPhoenixResourceManager().create(phoenixJob);
-            job.setPersistentResource(persistedJob);
-            log.info("Persisted Object : {}", job);
-            PhoenixJobActor.this.sender().tell(persistedJob.getId(), ActorRef.noSender());
+          PhoenixJob phoenixJob = createPersistable(job);
+          PhoenixJob persistedJob = job.getViewServiceFactory().getPhoenixResourceManager().create(phoenixJob);
+          job.setPersistentResource(persistedJob);
+          log.info("Persisted Object : {}", job);
+          PhoenixJobActor.this.sender().tell(persistedJob.getId(), self());
+
+          Connection phoenixConnection = null;
+          JobStatus currStatus = JobStatus.COMPLETED;
+          boolean success = true;
+          int progress = 0;
+          String errorMsg = null;
+
+          try {
+            phoenixConnection = job.getPhoenixConnection();
+            try {
+              executeJob(job, phoenixConnection);
+            } catch (Exception e) {
+              log.error("Error while executing job : {}", job, e);
+              currStatus = JobStatus.ERROR;
+              success = false;
+              errorMsg = e.getMessage();
+              progress = 0;
+              phoenixConnection.close();
+            }
+          } catch (Exception e) {
+            log.error("Error while submitting job {}", job, e);
+            success = false;
+            errorMsg = e.getMessage();
+            progress = 0;
+            currStatus = JobStatus.FAILED;
           }
 
-          Connection phoenixConnection = job.getPhoenixConnection();
-          if (job instanceof QueryJob) {
-            ResultSet executed = new PhoenixJobHelper().executeQuery(phoenixConnection,(QueryJob) job);
-            log.info("execution success? :{}", executed);
+          // if success then hold the result
+          if (success) {
+            if (job instanceof ResultableAsyncPhoenixJob) {
+              // hand over to resultSet handler Actor
+              phoenixActor.tell(new HoldResultMessage((ResultableAsyncPhoenixJob) job), self());
+              currStatus = JobStatus.COMPLETED;
+              progress = 100;
+            } else {
+              phoenixConnection.close();
+              progress = 100;
+              currStatus = JobStatus.FINISHED;
+            }
           }
+
+          // save the job status to db.
+          PhoenixJob pj = job.getPersistentResource();
+          long duration = System.currentTimeMillis() - pj.getSubmittedDate().getTime();
+          pj.setStatus(currStatus.name());
+          if( null != errorMsg ){
+            pj.setError(errorMsg);
+          }
+          pj.setProgress(progress);
+          pj.setDuration(duration);
+          PhoenixJob pjob = job.getViewServiceFactory().getPhoenixResourceManager().update(pj);
+          log.info("job persisted into db : {}", pjob);
         }
       }).
+
       matchAny(new FI.UnitApply<Object>() {
         @Override
         public void apply(Object x) throws Exception {
@@ -80,18 +146,33 @@ public class PhoenixJobActor extends AbstractActor {
       build();
   }
 
-  private Object executeJob(GetAllSchemasJob job, Connection phoenixConnection) throws PhoenixException, org.apache.ambari.view.hbase.core.ViewException {
-    ResultSet resultSet = new PhoenixJobHelper().getSchemas(phoenixConnection);
-    job.setResultSet(resultSet);
-    return job.getResult();
+  private void executeJob(IPhoenixJob job, Connection phoenixConnection) throws PhoenixException, ViewException, SQLException {
+    if (job instanceof GetAllSchemasJob) {
+      ResultSet resultSet = new PhoenixJobHelper().getSchemas(phoenixConnection);
+      ((GetAllSchemasJob) job).setResultSet(resultSet);// keep connection alive till someone retrives job
+    } else if (job instanceof ResultSetQueryJob) {
+      ResultSetQueryJob j = (ResultSetQueryJob) job;
+      ResultSet resultSet = new PhoenixJobHelper().executeQuery(phoenixConnection, j);
+      j.setResultSet(resultSet); // keep connection alive till someone retrives job
+    } else if (job instanceof UpdateQueryJob) {
+      UpdateQueryJob j = (UpdateQueryJob) job;
+      int updateCount = new PhoenixJobHelper().executeUpdate(phoenixConnection, j);
+      j.setResult(new UpdateResult(updateCount));
+    } else if (job instanceof QueryJob) {
+      QueryJob j = (QueryJob) job;
+      new PhoenixJobHelper().execute(phoenixConnection, j);
+    } else {
+      throw new ViewException("Cannot handle this type of job. Job = " + job);
+    }
   }
 
-  private PhoenixJob createPersistable(Job job) {
+  private PhoenixJob createPersistable(JobImpl job) {
     PhoenixJob phoenixJob = new PhoenixJob();
     phoenixJob.setData(job.serializeData());
     phoenixJob.setSubmittedDate(new Date());
-    phoenixJob.setOwner("some owner");
+    phoenixJob.setOwner(job.getOwner());
     phoenixJob.setJobType(job.getJobType());
+    phoenixJob.setStatus(JobStatus.NEW.name());
     return phoenixJob;
   }
 }

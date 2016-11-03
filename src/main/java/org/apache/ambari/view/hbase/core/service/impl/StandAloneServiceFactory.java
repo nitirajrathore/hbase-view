@@ -22,6 +22,8 @@ import org.apache.ambari.view.hbase.core.ViewException;
 import org.apache.ambari.view.hbase.core.persistence.DatabaseServiceFactory;
 import org.apache.ambari.view.hbase.core.persistence.StorageImpl;
 import org.apache.ambari.view.hbase.core.service.Configurator;
+import org.apache.ambari.view.hbase.core.service.Context;
+import org.apache.ambari.view.hbase.core.service.ContextImpl;
 import org.apache.ambari.view.hbase.core.service.IServiceFactory;
 import org.apache.ambari.view.hbase.core.service.JobService;
 import org.apache.ambari.view.hbase.core.service.internal.ViewServiceFactory;
@@ -29,20 +31,21 @@ import org.apache.ambari.view.hbase.core.service.internal.ViewServiceFactory;
 import java.util.Properties;
 
 public class StandAloneServiceFactory implements IServiceFactory {
-  private Configurator configurator;
-  private Properties viewProperties;
-  private JobService jobService;
-  DatabaseServiceFactory dsf = DatabaseServiceFactory.getInstance();
+  private final Context context;
+  private final Configurator configurator;
+  private final Properties viewProperties;
+  private final JobService jobService;
+  private final DatabaseServiceFactory dsf = DatabaseServiceFactory.getInstance();
 
   public StandAloneServiceFactory(Properties viewProperties) throws ViewException {
     this.viewProperties = viewProperties;
-    configurator = new ConfiguratorImpl(viewProperties);
-    jobService = new JobService( new ViewServiceFactory(configurator, new StorageImpl(dsf.getEntityManagerFactory()), PhoenixConnectionManagerImpl.getInstance()));
+    this.configurator = new ConfiguratorImpl(viewProperties);
+    this.context = new ContextImpl(viewProperties.getProperty("USER"));
+    this.jobService = new JobService( new ViewServiceFactory(configurator, new StorageImpl(dsf.getEntityManagerFactory()), PhoenixConnectionManagerImpl.getInstance()), this.context);
   }
 
   @Override
   public JobService getJobService() {
     return jobService;
   }
-
 }

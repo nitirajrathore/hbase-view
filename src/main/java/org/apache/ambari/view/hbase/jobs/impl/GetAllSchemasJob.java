@@ -19,12 +19,21 @@
 package org.apache.ambari.view.hbase.jobs.impl;
 
 import lombok.Data;
-import org.apache.ambari.view.hbase.jobs.ExecutablePhoenixJob;
+import org.apache.ambari.view.hbase.core.ViewException;
+import org.apache.ambari.view.hbase.jobs.ResultSetJob;
+import org.apache.ambari.view.hbase.jobs.phoenix.ResultableSyncPhoenixJob;
 import org.apache.ambari.view.hbase.jobs.result.GetAllSchemasJobResult;
 
 @Data
-public class GetAllSchemasJob extends ExecutablePhoenixJob<GetAllSchemasJobResult> {
+public class GetAllSchemasJob extends ResultableSyncPhoenixJob<GetAllSchemasJobResult> implements ResultSetJob {
   public GetAllSchemasJob() {
-    super(new GetAllSchemasJobResult(), false);
+    super(new GetAllSchemasJobResult());
   }
+
+  @Override
+  public GetAllSchemasJobResult getResult() throws ViewException {
+    this.getResultObject().populateFromResultSet(this.getResultSet());
+    return this.getResultObject();
+  }
+
 }

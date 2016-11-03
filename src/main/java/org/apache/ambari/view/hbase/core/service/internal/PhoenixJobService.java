@@ -18,20 +18,24 @@
 
 package org.apache.ambari.view.hbase.core.service.internal;
 
+import org.apache.ambari.view.hbase.core.persistence.PhoenixJob;
 import org.apache.ambari.view.hbase.core.service.JobNotFoundException;
 import org.apache.ambari.view.hbase.core.service.ServiceException;
-import org.apache.ambari.view.hbase.jobs.IPhoenixJob;
-import org.apache.ambari.view.hbase.jobs.Job;
+import org.apache.ambari.view.hbase.jobs.phoenix.AsyncPhoenixJob;
+import org.apache.ambari.view.hbase.jobs.phoenix.SyncPhoenixJob;
 import org.apache.ambari.view.hbase.jobs.result.Result;
+import org.apache.ambari.view.hbase.jobs.result.ResultSetResult;
 
 import java.util.List;
 
 public interface PhoenixJobService {
-  String submitAsyncPhoenixJob(Job job) throws ServiceException;
+  String submitJob(AsyncPhoenixJob job) throws ServiceException;
 
-  IPhoenixJob getPhoenixJob(String id) throws JobNotFoundException, ServiceException;
+  PhoenixJob getPhoenixJob(String id) throws JobNotFoundException, ServiceException;
 
-  List<IPhoenixJob> getPhoenixJobs() throws ServiceException;
+  Result getResult(String id) throws ServiceException;
 
-  <T extends Result<T>> T submitSyncJob(Job<T> job) throws ServiceException;
+  List<PhoenixJob> getPhoenixJobs() throws ServiceException;
+
+  <T extends ResultSetResult<T>> T executeJob(SyncPhoenixJob<T> job) throws ServiceException;
 }

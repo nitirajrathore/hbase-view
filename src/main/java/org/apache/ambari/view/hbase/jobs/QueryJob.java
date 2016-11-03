@@ -18,5 +18,15 @@
 
 package org.apache.ambari.view.hbase.jobs;
 
-public interface QueryJob extends Query{
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.sql.Statement;
+
+public interface QueryJob extends Query {
+  @JsonIgnore
+  void setStatement(Statement statement);
+
+  @JsonIgnore
+  Statement getStatement();
 }

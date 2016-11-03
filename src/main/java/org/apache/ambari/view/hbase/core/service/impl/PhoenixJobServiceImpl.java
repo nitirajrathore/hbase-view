@@ -21,12 +21,16 @@ package org.apache.ambari.view.hbase.core.service.impl;
 import akka.actor.ActorRef;
 import akka.util.Timeout;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ambari.view.hbase.Constants;
+import org.apache.ambari.view.hbase.core.persistence.PersistenceException;
+import org.apache.ambari.view.hbase.core.persistence.PhoenixJob;
 import org.apache.ambari.view.hbase.core.service.ServiceException;
 import org.apache.ambari.view.hbase.core.service.internal.PhoenixJobService;
 import org.apache.ambari.view.hbase.core.service.internal.ViewServiceFactory;
-import org.apache.ambari.view.hbase.jobs.IPhoenixJob;
-import org.apache.ambari.view.hbase.jobs.Job;
+import org.apache.ambari.view.hbase.jobs.phoenix.AsyncPhoenixJob;
+import org.apache.ambari.view.hbase.jobs.phoenix.SyncPhoenixJob;
 import org.apache.ambari.view.hbase.jobs.result.Result;
+import org.apache.ambari.view.hbase.jobs.result.ResultSetResult;
 import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
@@ -48,57 +52,47 @@ public class PhoenixJobServiceImpl implements PhoenixJobService {
   }
 
   @Override
-  public String submitAsyncPhoenixJob(Job job) throws ServiceException {
-//    try {
-//      if (job instanceof IPhoenixJob) {
-//        try (
-//          Connection connection = PhoenixConnectionManagerImpl.getInstance()
-//            .getConnection(this.factory.getConfigurator().getPhoenixConfig())
-//        ) {
-//          ActorRef actorRef = this.factory.getActorSystem().actorOf(PhoenixJobActor.props(factory));
-//          Timeout timeout = new Timeout(Duration.create(5000, "seconds"));
-//          Future<Object> future = ask(actorRef, job, timeout);
-//          String result = (String) Await.result(future, timeout.duration());
-//          return result;
-//        } catch (SQLException | PhoenixException | ViewException e) {
-//          log.error("error : ", e);
-//          throw new ServiceException(e);
-//        }
-//      }
-//      throw new ServiceException("Should not have come here..");
-//    } catch (Exception e) {
-//      log.error("Exception : ", e);
-//      throw new ServiceException(e);
-//    }
-    return null;
-  }
-
-  @Override
-  public IPhoenixJob getPhoenixJob(String id) throws ServiceException {
-//    try {
-//      return this.factory.getPhoenixResourceManager().read(id);
-//    } catch (PersistenceException e) {
-//      throw new ServiceException(e.getMessage(), e);
-//    }
-    return null;
-  }
-
-  @Override
-  public List<IPhoenixJob> getPhoenixJobs() throws ServiceException {
-//    try {
-//      return phoenixJobResourceManager.readAll();
-//    } catch (PersistenceException e) {
-//      throw new ServiceException(e);
-//    }
-
-    return null;
-  }
-
-  @Override
-  public <T extends Result<T>> T submitSyncJob(Job<T> job) throws ServiceException {
+  public String submitJob(AsyncPhoenixJob job) throws ServiceException {
     log.info("Executing job : {}", job);
     job.setViewServiceFactory(this.getViewServiceFactory());
-    ActorRef actorRef = this.getViewServiceFactory().getActorSystem().getPhoenixJobActor();
+    ActorRef actorRef = this.getViewServiceFactory().getActorSystem().getPhoenixActor();
+    Timeout timeout = new Timeout(Duration.create(Constants.JOB_SUBMISSION_TIMEOUT_SECS, "seconds"));
+    Future<Object> future = ask(actorRef, job, timeout);
+    try {
+      return (String) Await.result(future, timeout.duration());
+    } catch (Exception e) {
+      throw new ServiceException("Exception while getting result from backend :" + e.getMessage(), e);
+    }
+  }
+
+  @Override
+  public PhoenixJob getPhoenixJob(String id) throws ServiceException {
+    try {
+      return this.getViewServiceFactory().getPhoenixResourceManager().read(id);
+    } catch (PersistenceException e) {
+      throw new ServiceException(e.getMessage(), e);
+    }
+  }
+
+  @Override
+  public Result getResult(String id) throws ServiceException {
+    return null;
+  }
+
+  @Override
+  public List<PhoenixJob> getPhoenixJobs() throws ServiceException {
+    try {
+      return this.getViewServiceFactory().getPhoenixResourceManager().readAll();
+    } catch (PersistenceException e) {
+      throw new ServiceException(e);
+    }
+  }
+
+  @Override
+  public <T extends ResultSetResult<T>> T executeJob(SyncPhoenixJob<T> job) throws ServiceException {
+    log.info("Executing job : {}", job);
+    job.setViewServiceFactory(this.getViewServiceFactory());
+    ActorRef actorRef = this.getViewServiceFactory().getActorSystem().getPhoenixActor();
     Timeout timeout = new Timeout(Duration.create(5000, "seconds"));
     Future<Object> future = ask(actorRef, job, timeout);
     T result = null;
@@ -109,21 +103,4 @@ public class PhoenixJobServiceImpl implements PhoenixJobService {
     }
     return result;
   }
-
-//
-//  @Override
-//  <T extends Result<T>> public T submitSyncJob(Connection connection, Job<T> job) throws
-//    ServiceException, PhoenixException {
-//    if (job instanceof GetTablesJob)
-//      return new PhoenixJobHelper().getTables(connection, (GetTablesJob) job);
-//    else return Optional.absent();
-//  }
-
-//  @Override
-//  public Optional<ResultSet> submitSyncJob(Connection connection, Job job) throws
-//    ServiceException, PhoenixException {
-//    if (job instanceof GetTablesJob)
-//      return new PhoenixJobHelper().getTables(connection, (GetTablesJob) job);
-//    else return Optional.absent();
-//  }
 }

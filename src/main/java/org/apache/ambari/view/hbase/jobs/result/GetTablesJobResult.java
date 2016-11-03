@@ -25,7 +25,7 @@ import java.sql.ResultSet;
 import java.util.List;
 
 @Data
-public class GetTablesJobResult implements Result<GetTablesJobResult> {
+public class GetTablesJobResult implements ResultSetResult<GetTablesJobResult> {
   private List<TableRef> tables;
 
   @Override

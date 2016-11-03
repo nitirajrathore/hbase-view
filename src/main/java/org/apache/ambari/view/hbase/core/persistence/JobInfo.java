@@ -31,6 +31,10 @@ public interface JobInfo {
 
   void setOwner(String owner);
 
+  Integer getProgress();
+
+  void setProgress(Integer progress);
+
   void setSubmittedDate(Date submittedDate);
 
   void setDuration(Long duration);

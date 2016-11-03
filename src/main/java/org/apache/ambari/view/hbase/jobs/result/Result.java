@@ -18,10 +18,5 @@
 
 package org.apache.ambari.view.hbase.jobs.result;
 
-import org.apache.ambari.view.hbase.core.ViewException;
-
-import java.sql.ResultSet;
-
-public interface Result<T extends Result> {
-  T populateFromResultSet( ResultSet rs) throws ViewException;
+public interface Result<T extends Result<T>> {
 }

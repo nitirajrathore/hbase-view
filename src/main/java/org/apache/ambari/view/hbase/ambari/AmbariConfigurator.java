@@ -18,23 +18,30 @@
 
 package org.apache.ambari.view.hbase.ambari;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 import org.apache.ambari.view.ViewContext;
 import org.apache.ambari.view.hbase.core.configs.PhoenixConfig;
 import org.apache.ambari.view.hbase.core.service.Configurator;
+
+import java.util.Properties;
 
 public class AmbariConfigurator implements Configurator {
 
   private final ViewContext viewContext;
   private final PhoenixConfig phoenixConfig;
+  private final Properties properties;
 
-  public AmbariConfigurator(ViewContext viewContext){
+  public AmbariConfigurator(ViewContext viewContext, Properties properties){
     this.viewContext = viewContext;
+    this.properties = properties;
     phoenixConfig = new PhoenixConfig(viewContext.getProperties());
   }
 
   @Override
-  public String getProperty(String propertyName) {
-    return viewContext.getProperties().get(propertyName);
+  public Optional<String> getProperty(String propertyName) {
+    return Optional.fromNullable(Strings.emptyToNull(viewContext.getProperties().get(propertyName)))
+      .or(Optional.fromNullable(Strings.emptyToNull((String)this.properties.get(propertyName))));
   }
 
   @Override

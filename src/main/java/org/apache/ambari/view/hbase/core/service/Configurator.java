@@ -18,6 +18,7 @@
 
 package org.apache.ambari.view.hbase.core.service;
 
+import com.google.common.base.Optional;
 import org.apache.ambari.view.hbase.core.configs.PhoenixConfig;
 
 public interface Configurator {
@@ -29,7 +30,7 @@ public interface Configurator {
 //
 //  AmbariConfig getAmbariConfig();
 
-  String getProperty(String propertyName);
+  Optional<String> getProperty(String propertyName);
 
   PhoenixConfig getPhoenixConfig();
 }

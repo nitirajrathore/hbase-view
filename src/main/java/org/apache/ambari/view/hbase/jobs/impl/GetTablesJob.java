@@ -18,25 +18,24 @@
 
 package org.apache.ambari.view.hbase.jobs.impl;
 
-import org.apache.ambari.view.hbase.core.service.internal.PhoenixException;
-import org.apache.ambari.view.hbase.jobs.IPhoenixJob;
-import org.apache.ambari.view.hbase.jobs.Job;
+import com.google.gson.Gson;
+import org.apache.ambari.view.hbase.jobs.phoenix.ResultableSyncPhoenixJob;
 import org.apache.ambari.view.hbase.jobs.result.GetTablesJobResult;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
+import java.util.HashMap;
+import java.util.Map;
 
-public class GetTablesJob extends Job<GetTablesJobResult> implements IPhoenixJob {
+public class GetTablesJob extends ResultableSyncPhoenixJob<GetTablesJobResult> {
   private String catalog;
   private String schemaPattern;
   private String tableNamePattern;
 
   public GetTablesJob() {
-    super(new GetTablesJobResult(), false);
+    super(new GetTablesJobResult());
   }
 
   public GetTablesJob(String catalog, String schemaPattern, String tableNamePattern) {
-    super(new GetTablesJobResult(), false);
+    super(new GetTablesJobResult());
     this.catalog = catalog;
     this.schemaPattern = schemaPattern;
     this.tableNamePattern = tableNamePattern;
@@ -68,21 +67,16 @@ public class GetTablesJob extends Job<GetTablesJobResult> implements IPhoenixJob
 
   @Override
   public char[] serializeData() {
-    return new char[0];
+    Gson gson = new Gson();
+    Map<String, Object> map = new HashMap<>();
+    map.put("catalog", this.catalog);
+    map.put("schemaPattern", this.schemaPattern);
+    map.put("tableNamePattern", this.tableNamePattern);
+    return gson.toJson(map).toCharArray();
   }
 
   @Override
   public GetTablesJobResult getResult() {
-    return null;
-  }
-
-  @Override
-  public void setResultSet(ResultSet rs) {
-
-  }
-
-  @Override
-  public Connection getPhoenixConnection() throws PhoenixException {
-    return null;
+    return this.getResultObject().populateFromResultSet(this.getResultSet());
   }
 }

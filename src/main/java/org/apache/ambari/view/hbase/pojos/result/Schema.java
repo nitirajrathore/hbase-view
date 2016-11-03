@@ -18,9 +18,11 @@
 
 package org.apache.ambari.view.hbase.pojos.result;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class Schema {
   public String name;
 }

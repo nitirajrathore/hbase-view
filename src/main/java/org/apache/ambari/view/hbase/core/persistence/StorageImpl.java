@@ -2,6 +2,7 @@ package org.apache.ambari.view.hbase.core.persistence;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -47,8 +48,11 @@ public class StorageImpl implements Storage {
 
   @Override
   public <T extends PersistentResource> List<T> readAll(Class<? extends T> klass, FilteringStrategy filter) throws PersistenceException {
-    String query = getSelectStatement(klass, filter.whereStatement());
-    return new ArrayList<>(getEntityManager().createQuery(query).getResultList());
+    String query = getSelectStatement(klass, (null == filter) ? null : filter.whereStatement());
+    EntityManager entityManager = getEntityManager();
+    Query q = entityManager.createQuery(query);
+    List resultSet = q.getResultList();
+    return new ArrayList<>(resultSet);
   }
 
   @Override

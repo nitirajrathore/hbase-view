@@ -18,55 +18,19 @@
 
 package org.apache.ambari.view.hbase.jobs;
 
-import org.apache.ambari.view.hbase.core.ViewException;
 import org.apache.ambari.view.hbase.core.service.internal.ViewServiceFactory;
-import org.apache.ambari.view.hbase.jobs.result.Result;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
-public abstract class Job<T extends Result<T>, P> {
-  private ViewServiceFactory viewServiceFactory;
+public interface Job {
+  char[] serializeData();
 
-  private boolean async;
-  private P persistentResource;
+  String getJobType();
 
-  private T result;
-  protected Job( T result, boolean isAsync ) {
-    this.result = result;
-    this.async = isAsync;
-  }
+  String getOwner();
 
+  @JsonIgnore
+  ViewServiceFactory getViewServiceFactory();
 
-  public char[] serializeData() {
-    return null;
-  }
-
-  public String getJobType() {
-    return this.getClass().getSimpleName();
-  }
-
-  public boolean isAsync() {
-    return async;
-  }
-
-  protected T getResultObject(){
-    return result;
-  }
-
-  abstract public  T getResult() throws ViewException;
-
-  public ViewServiceFactory getViewServiceFactory() {
-    return viewServiceFactory;
-  }
-
-  public void setViewServiceFactory(ViewServiceFactory viewServiceFactory) {
-    if( null != viewServiceFactory) // this can only be set once.
-      this.viewServiceFactory = viewServiceFactory;
-  }
-
-  public P getPersistentResource() {
-    return persistentResource;
-  }
-
-  public void setPersistentResource(P persistentResource) {
-    this.persistentResource = persistentResource;
-  }
+  @JsonIgnore
+  void setViewServiceFactory(ViewServiceFactory viewServiceFactory);
 }

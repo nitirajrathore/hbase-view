@@ -63,7 +63,7 @@ public class ServiceFactory {
   public IServiceFactory getInstance() throws ViewException {
     if (null != viewContext) { // provide standalone service factory
       LOG.info("Creating AmbariServiceFactory with view context : " + viewContext);
-      return new AmbariServiceFactory(new SafeViewContext(viewContext));
+      return new AmbariServiceFactory(new SafeViewContext(viewContext), getViewProperties());
     } else {
       LOG.info("Creating StandAloneServiceFactory.");
       return new StandAloneServiceFactory(getViewProperties());

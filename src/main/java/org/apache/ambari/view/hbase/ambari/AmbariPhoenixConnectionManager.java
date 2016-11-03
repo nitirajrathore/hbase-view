@@ -19,23 +19,26 @@
 package org.apache.ambari.view.hbase.ambari;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ambari.view.hbase.Constants;
+import org.apache.ambari.view.hbase.core.PhoenixConnection;
 import org.apache.ambari.view.hbase.core.ViewException;
 import org.apache.ambari.view.hbase.core.configs.PhoenixConfig;
 import org.apache.ambari.view.hbase.core.service.PhoenixConnectionManager;
 import org.apache.ambari.view.hbase.core.service.internal.PhoenixException;
+import org.apache.ambari.view.hbase.core.service.internal.ViewActorSystem;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 
 @Slf4j
-public class AmbariPhoenixConnectionManager implements PhoenixConnectionManager {
+public class AmbariPhoenixConnectionManager extends PhoenixConnectionManager {
   private static AmbariPhoenixConnectionManager manager;
 
   @Override
-  public Connection getConnection(PhoenixConfig configs) throws PhoenixException {
+  protected Connection createConnection(PhoenixConfig configs) throws PhoenixException {
     String url = configs.getUrl();
     try {
-      return DriverManager.getConnection(url);
+      return new PhoenixConnection(DriverManager.getConnection(url), ViewActorSystem.get().getPhoenixConnectionActor());
     } catch (Exception e) {
       log.error("Error while creating phoenix connection : ", e);
       throw new PhoenixException(String.format("Cannot get connection of url : %s", url));
@@ -48,7 +51,7 @@ public class AmbariPhoenixConnectionManager implements PhoenixConnectionManager 
         if (null == manager) {
           manager = new AmbariPhoenixConnectionManager();
           try {
-            Class<?> klass2 = Class.forName("org.apache.phoenix.queryserver.client.Driver");
+            Class<?> klass2 = Class.forName(Constants.PHOENIX_QUERYSERVER_CLIENT_DRIVER);
           } catch (ClassNotFoundException e) {
             log.error("Cannot register the phoenix Driver", e);
             throw new ViewException(e);

@@ -35,7 +35,7 @@ public class BaseRestService {
   protected ViewContext viewContext;
 
   protected IServiceFactory getServerFactory() throws ViewException {
-    LOG.info("getPhoenixJobs Getting serviceFactory..  ");
+    LOG.info("Creating serviceFactory..  ");
     return new ServiceFactory(viewContext).getInstance();
   }
 

@@ -13,10 +13,13 @@
         <generated-value strategy="TABLE"/>
       </id>
       <basic name="data" >
-        <lob />
+        <!--<lob />-->
       </basic>
       <basic name="submittedDate"></basic>
       <basic name="duration"></basic>
+      <basic name="error"></basic>
+      <basic name="progress"></basic>
+      <basic name="status"></basic>
       <basic name="owner"></basic>
       <basic name="jobType"></basic>
     </attributes>

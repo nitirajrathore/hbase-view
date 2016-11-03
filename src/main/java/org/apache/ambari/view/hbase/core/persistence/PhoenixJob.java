@@ -18,8 +18,13 @@
 
 package org.apache.ambari.view.hbase.core.persistence;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.Date;
 
+@Data
+@NoArgsConstructor
 public class PhoenixJob extends JobInfoImpl implements PersistentResource {
   private String id;
   private char[] data;
@@ -27,11 +32,9 @@ public class PhoenixJob extends JobInfoImpl implements PersistentResource {
   private Long duration;
   private String owner;
   private String jobType;
-
-  @Override
-  public Date getSubmittedDate() {
-    return submittedDate;
-  }
+  private String status;
+  private Integer progress;
+  private String error;
 
   /**
    * subclasses to override it in case they have some other data.
@@ -39,64 +42,6 @@ public class PhoenixJob extends JobInfoImpl implements PersistentResource {
    */
   protected char[] serializeData(){
     return data;
-  }
-
-  @Override
-  public char[] getData() {
-    return data;
-  }
-
-  @Override
-  public Long getDuration() {
-    return duration;
-  }
-
-  @Override
-  public String getOwner() {
-    return owner;
-  }
-
-  @Override
-  public void setOwner(String owner) {
-    this.owner = owner;
-  }
-
-  @Override
-  public void setSubmittedDate(Date submittedDate) {
-    this.submittedDate = submittedDate;
-  }
-
-  @Override
-  public void setDuration(Long duration) {
-    this.duration = duration;
-  }
-
-  @Override
-  public void setData(char[] data) {
-    this.data = data;
-  }
-
-  @Override
-  public void setJobType(String type) {
-    this.jobType = type;
-  }
-
-  @Override
-  public String getJobType() {
-    return jobType;
-  }
-
-  public PhoenixJob() {
-  }
-
-  @Override
-  public String getId() {
-    return id;
-  }
-
-  @Override
-  public void setId(String id) {
-    this.id = id;
   }
 
   @Override
@@ -112,6 +57,15 @@ public class PhoenixJob extends JobInfoImpl implements PersistentResource {
     }
     if(ppj.getSubmittedDate() != null){
       this.setSubmittedDate(ppj.getSubmittedDate());
+    }
+    if(ppj.getError() != null){
+      this.setError(ppj.getError());
+    }
+    if(ppj.getProgress() != null){
+      this.setProgress(ppj.getProgress());
+    }
+    if(ppj.getStatus() != null){
+      this.setStatus(ppj.getStatus());
     }
   }
 }

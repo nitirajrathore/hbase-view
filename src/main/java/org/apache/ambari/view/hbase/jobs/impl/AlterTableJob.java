@@ -20,25 +20,23 @@ package org.apache.ambari.view.hbase.jobs.impl;
 
 import com.google.gson.Gson;
 import lombok.Data;
-import org.apache.ambari.view.hbase.jobs.ExecutablePhoenixJob;
 import org.apache.ambari.view.hbase.jobs.QueryJob;
+import org.apache.ambari.view.hbase.jobs.phoenix.AsyncPhoenixJob;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Data
-public class AlterTableJob extends ExecutablePhoenixJob implements QueryJob{
+public class AlterTableJob extends AsyncPhoenixJob implements QueryJob {
   transient private String schemaName;
   transient private String tableName;
 //  transient private List<String> columnDefinitions;
 
-  public AlterTableJob() {
-    super(null, true);
+  public AlterTableJob(){
   }
 
   public AlterTableJob(String schemaName, String tableName, List<String> columnDefinitions) {
-    super(null, true);
     this.schemaName = schemaName;
     this.tableName = tableName;
 //    this.columnDefinitions = columnDefinitions;

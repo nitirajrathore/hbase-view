@@ -18,7 +18,10 @@
 
 package org.apache.ambari.view.hbase.core.service.internal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ambari.view.hbase.jobs.QueryJob;
+import org.apache.ambari.view.hbase.jobs.ResultSetQueryJob;
+import org.apache.ambari.view.hbase.jobs.UpdateQueryJob;
 import org.apache.ambari.view.hbase.jobs.impl.GetTablesJob;
 
 import java.sql.Connection;
@@ -26,6 +29,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+@Slf4j
 public class PhoenixJobHelper {
   private static final String TABLES = "TABLE";
 
@@ -48,14 +52,39 @@ public class PhoenixJobHelper {
     }
   }
 
-  public boolean execute(Connection connection, QueryJob job) throws SQLException {
-    Statement statement = connection.createStatement();
-    return statement.execute(job.getQuery());
+  public int executeUpdate(Connection connection, UpdateQueryJob job) throws PhoenixException {
+    try {
+      Statement statement = connection.createStatement();
+      job.setStatement(statement);
+      return statement.executeUpdate(job.getQuery());
+    } catch (SQLException e) {
+      log.error("Exception occurred while executing", e);
+      throw new PhoenixException(e);
+    }
   }
 
-  public ResultSet executeQuery(Connection connection, QueryJob job) throws SQLException {
-    Statement statement = connection.createStatement();
-    return statement.executeQuery(job.getQuery());
+  public boolean execute(Connection connection, QueryJob job) throws PhoenixException {
+    try {
+      Statement statement = connection.createStatement();
+      job.setStatement(statement);
+      return statement.execute(job.getQuery());
+    } catch (SQLException e) {
+      log.error("Exception occurred while executing", e);
+      throw new PhoenixException(e);
+    }
+  }
+
+  public ResultSet executeQuery(Connection connection, ResultSetQueryJob job) throws PhoenixException {
+    try {
+      Statement statement = connection.createStatement();
+      job.setStatement(statement);
+      ResultSet resultSet = statement.executeQuery(job.getQuery());
+      job.setResultSet(resultSet);
+      return resultSet;
+    } catch (SQLException e) {
+      log.error("Exception occurred while executing", e);
+      throw new PhoenixException(e);
+    }
   }
 
 }

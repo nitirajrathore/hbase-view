@@ -24,12 +24,14 @@ import org.apache.ambari.view.hbase.core.persistence.JobInfo;
 import org.apache.ambari.view.hbase.core.persistence.PersistenceException;
 import org.apache.ambari.view.hbase.core.persistence.PhoenixJob;
 import org.apache.ambari.view.hbase.core.service.internal.PhoenixException;
+import org.apache.ambari.view.hbase.core.service.internal.PhoenixJobService;
 import org.apache.ambari.view.hbase.core.service.internal.ViewServiceFactory;
-import org.apache.ambari.view.hbase.jobs.IPhoenixJob;
-import org.apache.ambari.view.hbase.jobs.Job;
+import org.apache.ambari.view.hbase.jobs.JobImpl;
+import org.apache.ambari.view.hbase.jobs.impl.CreateSchemaJob;
 import org.apache.ambari.view.hbase.jobs.impl.CreateTableJob;
 import org.apache.ambari.view.hbase.jobs.impl.GetAllSchemasJob;
 import org.apache.ambari.view.hbase.jobs.impl.GetTablesJob;
+import org.apache.ambari.view.hbase.jobs.phoenix.AsyncPhoenixJob;
 import org.apache.ambari.view.hbase.jobs.result.GetAllSchemasJobResult;
 import org.apache.ambari.view.hbase.pojos.TableRef;
 import org.apache.ambari.view.hbase.pojos.result.Schema;
@@ -41,9 +43,11 @@ import java.util.List;
 @Slf4j
 public class JobService {
   private final ViewServiceFactory factory;
+  private final Context context;
 
-  public JobService(ViewServiceFactory factory) {
+  public JobService(ViewServiceFactory factory, Context context) {
     this.factory = factory;
+    this.context = context;
   }
 
 //  public String submitJob(JobInfo job) throws ServiceException {
@@ -52,9 +56,9 @@ public class JobService {
 //    else throw new ServiceException("Illegal Argument");
 //  }
 
-  public String submitJob(Job job) throws ServiceException {
-    if (job instanceof IPhoenixJob)
-      return factory.getPhoenixJobService().submitAsyncPhoenixJob(job);
+  public String submitJob(JobImpl job) throws ServiceException {
+    if (job instanceof AsyncPhoenixJob)
+      return factory.getPhoenixJobService().submitJob((AsyncPhoenixJob)job);
     else throw new ServiceException("Illegal Argument");
   }
 
@@ -156,7 +160,11 @@ public class JobService {
   }
 
   public JobInfo getJob(String id) throws JobNotFoundException, ServiceException {
-    return null;
+    return getPhoenixJobService().getPhoenixJob(id);
+  }
+
+  private PhoenixJobService getPhoenixJobService() {
+    return this.factory.getPhoenixJobService();
   }
 
   public List<JobInfo> getJobs() throws ServiceException, PersistenceException {
@@ -165,7 +173,17 @@ public class JobService {
   }
 
   public List<Schema> getAllSchemas(GetAllSchemasJob getAllSchemasJob) throws ServiceException, PhoenixException {
-    GetAllSchemasJobResult result = this.factory.getPhoenixJobService().submitSyncJob(getAllSchemasJob);
+    getAllSchemasJob.setOwner(this.context.getUser());
+    GetAllSchemasJobResult result = this.factory.getPhoenixJobService().executeJob(getAllSchemasJob);
     return result.getSchemas();
+  }
+
+  public String createSchema(CreateSchemaJob createSchemaJob) throws ServiceException {
+    fillDetails(createSchemaJob);
+    return this.factory.getPhoenixJobService().submitJob(createSchemaJob);
+  }
+
+  private void fillDetails(CreateSchemaJob createSchemaJob) {
+     createSchemaJob.setOwner(this.context.getUser());
   }
 }

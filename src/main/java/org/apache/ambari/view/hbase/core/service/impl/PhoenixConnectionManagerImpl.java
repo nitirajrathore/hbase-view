@@ -18,27 +18,28 @@
 
 package org.apache.ambari.view.hbase.core.service.impl;
 
+import org.apache.ambari.view.hbase.core.PhoenixConnection;
 import org.apache.ambari.view.hbase.core.ViewException;
 import org.apache.ambari.view.hbase.core.configs.PhoenixConfig;
 import org.apache.ambari.view.hbase.core.service.PhoenixConnectionManager;
 import org.apache.ambari.view.hbase.core.service.internal.PhoenixException;
+import org.apache.ambari.view.hbase.core.service.internal.ViewActorSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 
-public class PhoenixConnectionManagerImpl implements PhoenixConnectionManager {
+public class PhoenixConnectionManagerImpl extends PhoenixConnectionManager {
   private final static Logger LOG =
     LoggerFactory.getLogger(PhoenixConnectionManagerImpl.class);
   private static PhoenixConnectionManagerImpl manager;
 
   @Override
-  public Connection getConnection(PhoenixConfig configs) throws PhoenixException {
+  protected Connection createConnection(PhoenixConfig configs) throws PhoenixException {
     String url = configs.getUrl();
     try {
-      return DriverManager.getConnection(url);
+      return new PhoenixConnection(DriverManager.getConnection(url), ViewActorSystem.get().getPhoenixConnectionActor());
     }catch (Exception e) {
       LOG.error("Error while creating phoenix connection : ", e);
       throw new PhoenixException(String.format("Cannot get connection of url : %s", url));

@@ -23,8 +23,8 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.FluentIterable;
 import com.google.gson.Gson;
 import lombok.Data;
-import org.apache.ambari.view.hbase.jobs.ExecutablePhoenixJob;
 import org.apache.ambari.view.hbase.jobs.QueryJob;
+import org.apache.ambari.view.hbase.jobs.phoenix.AsyncPhoenixJob;
 import org.apache.ambari.view.hbase.pojos.ColumnDef;
 import org.apache.ambari.view.hbase.pojos.Constraint;
 import org.apache.ambari.view.hbase.pojos.TableRef;
@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 @Data
-public class CreateTableJob extends ExecutablePhoenixJob implements QueryJob {
+public class CreateTableJob extends AsyncPhoenixJob implements QueryJob {
   private TableRef tableRef;
   private List<ColumnDef> columnDefs;
   private Constraint constraint;
@@ -42,7 +42,6 @@ public class CreateTableJob extends ExecutablePhoenixJob implements QueryJob {
   private List<String> splitPoints;
 
   public CreateTableJob() {
-    super(null, true);
   }
 
   @Override
