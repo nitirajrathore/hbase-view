@@ -18,12 +18,13 @@
 
 package org.apache.ambari.view.hbase.core.persistence;
 
+import java.sql.Clob;
 import java.util.Date;
 
 public interface JobInfo {
   Date getSubmittedDate();
 
-  char[] getData();
+  Clob getData();
 
   Long getDuration();
 
@@ -39,9 +40,13 @@ public interface JobInfo {
 
   void setDuration(Long duration);
 
-  void setData(char[] data);
+  void setData(Clob data);
 
   void setJobType(String type);
 
   String getJobType();
+
+  void setError(Clob error);
+
+  Clob getError();
 }

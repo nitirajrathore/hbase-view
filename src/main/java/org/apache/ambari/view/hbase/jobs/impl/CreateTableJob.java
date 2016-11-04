@@ -45,13 +45,13 @@ public class CreateTableJob extends AsyncPhoenixJob implements QueryJob {
   }
 
   @Override
-  public char[] serializeData() {
+  public String serializeData() {
     Map<String, Object> data = new HashMap<>();
     data.put("schemaName", this.getTableRef().getSchemaName());
     data.put("tableName", this.getTableRef().getTableName());
     data.put("columnDefs", this.getColumnDefs());
     Gson gson = new Gson();
-    return gson.toJson(data).toCharArray();
+    return gson.toJson(data);
   }
 
   @Override

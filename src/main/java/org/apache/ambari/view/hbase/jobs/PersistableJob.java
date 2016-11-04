@@ -18,19 +18,10 @@
 
 package org.apache.ambari.view.hbase.jobs;
 
-import org.apache.ambari.view.hbase.core.service.internal.ViewServiceFactory;
-import org.codehaus.jackson.annotate.JsonIgnore;
+import org.apache.ambari.view.hbase.core.persistence.PersistentResource;
 
-public interface Job {
-  String serializeData();
+public interface PersistableJob<T extends PersistentResource> {
+  T getPersistentResource();
 
-  String getJobType();
-
-  String getOwner();
-
-  @JsonIgnore
-  ViewServiceFactory getViewServiceFactory();
-
-  @JsonIgnore
-  void setViewServiceFactory(ViewServiceFactory viewServiceFactory);
+  void setPersistentResource(T presistedResource);
 }

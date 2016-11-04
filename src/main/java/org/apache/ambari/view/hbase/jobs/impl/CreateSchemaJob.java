@@ -18,9 +18,13 @@
 
 package org.apache.ambari.view.hbase.jobs.impl;
 
+import com.google.gson.Gson;
 import lombok.Data;
 import org.apache.ambari.view.hbase.jobs.QueryJob;
 import org.apache.ambari.view.hbase.jobs.phoenix.AsyncPhoenixJob;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 public class CreateSchemaJob extends AsyncPhoenixJob implements QueryJob {
@@ -29,5 +33,12 @@ public class CreateSchemaJob extends AsyncPhoenixJob implements QueryJob {
   @Override
   public String getQuery() {
     return "CREATE SCHEMA " + schemaName;
+  }
+
+  public String serializeData(){
+    Map map = new HashMap();
+    map.put("schemaName" ,schemaName);
+    Gson gson = new Gson();
+    return gson.toJson(map);
   }
 }

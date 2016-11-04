@@ -66,13 +66,13 @@ public class GetTablesJob extends ResultableSyncPhoenixJob<GetTablesJobResult> {
   }
 
   @Override
-  public char[] serializeData() {
+  public String serializeData() {
     Gson gson = new Gson();
     Map<String, Object> map = new HashMap<>();
     map.put("catalog", this.catalog);
     map.put("schemaPattern", this.schemaPattern);
     map.put("tableNamePattern", this.tableNamePattern);
-    return gson.toJson(map).toCharArray();
+    return gson.toJson(map);
   }
 
   @Override

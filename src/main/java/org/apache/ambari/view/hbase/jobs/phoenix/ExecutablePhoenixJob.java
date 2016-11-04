@@ -16,39 +16,24 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.jobs;
+package org.apache.ambari.view.hbase.jobs.phoenix;
 
-import org.apache.ambari.view.hbase.core.ViewException;
-import org.apache.ambari.view.hbase.core.persistence.PhoenixJob;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.ambari.view.hbase.core.service.internal.PhoenixException;
-import org.apache.ambari.view.hbase.jobs.result.Result;
+import org.apache.ambari.view.hbase.jobs.JobImpl;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 
-public class ExecutablePhoenixJob<T extends Result<T>> extends Job<T, PhoenixJob> implements IPhoenixJob {
+public class ExecutablePhoenixJob extends JobImpl implements IPhoenixJob {
+  @JsonIgnore
   private Connection phoenixConnection;
-  private ResultSet resultSet;
-
-  protected ExecutablePhoenixJob(T result, boolean isAsync) {
-    super(result, isAsync);
-  }
-
-  @Override
-  public T getResult() throws ViewException {
-    return this.getResultObject().populateFromResultSet(resultSet);
-  }
-
-  @Override
-  public void setResultSet(ResultSet rs){
-    this.resultSet = rs;
-  }
   /**
    * Lazily creates and saves new connection.
    *
    * @return
    */
   @Override
+  @JsonIgnore
   public synchronized Connection getPhoenixConnection() throws PhoenixException {
     if (null == this.phoenixConnection) {
       this.phoenixConnection = this.getViewServiceFactory().getPhoenixConnectionManager()

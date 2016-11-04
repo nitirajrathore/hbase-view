@@ -16,21 +16,12 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.jobs;
+package org.apache.ambari.view.hbase.jobs.result;
 
-import org.apache.ambari.view.hbase.core.service.internal.ViewServiceFactory;
-import org.codehaus.jackson.annotate.JsonIgnore;
+import org.apache.ambari.view.hbase.core.ViewException;
 
-public interface Job {
-  String serializeData();
+import java.sql.ResultSet;
 
-  String getJobType();
-
-  String getOwner();
-
-  @JsonIgnore
-  ViewServiceFactory getViewServiceFactory();
-
-  @JsonIgnore
-  void setViewServiceFactory(ViewServiceFactory viewServiceFactory);
+public interface ResultSetResult<T extends Result<T>> extends Result<T> {
+  T populateFromResultSet(ResultSet rs) throws ViewException;
 }

@@ -21,28 +21,21 @@ package org.apache.ambari.view.hbase.core.persistence;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Clob;
 import java.util.Date;
 
 @Data
 @NoArgsConstructor
 public class PhoenixJob extends JobInfoImpl implements PersistentResource {
   private String id;
-  private char[] data;
+  private Clob data;
   private Date submittedDate;
   private Long duration;
   private String owner;
   private String jobType;
   private String status;
   private Integer progress;
-  private String error;
-
-  /**
-   * subclasses to override it in case they have some other data.
-   * @return
-   */
-  protected char[] serializeData(){
-    return data;
-  }
+  private Clob error;
 
   @Override
   public void override(Object o) {

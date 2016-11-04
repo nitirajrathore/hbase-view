@@ -67,13 +67,13 @@ public class AlterTableJob extends AsyncPhoenixJob implements QueryJob {
   }
 
   @Override
-  public char[] serializeData() {
+  public String serializeData() {
     Map<String,Object> data = new HashMap<>();
     data.put("schemaName", schemaName);
     data.put("tableName", tableName);
 //    data.put("columnDefinitions", columnDefinitions);
     Gson gson = new Gson();
-    return gson.toJson(data).toCharArray();
+    return gson.toJson(data);
   }
 
   @Override

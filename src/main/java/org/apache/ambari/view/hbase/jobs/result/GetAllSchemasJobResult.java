@@ -21,6 +21,7 @@ package org.apache.ambari.view.hbase.jobs.result;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ambari.view.hbase.core.ViewException;
+import org.apache.ambari.view.hbase.pojos.result.Schema;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,15 +30,15 @@ import java.util.List;
 
 @Slf4j
 @Data
-public class GetAllSchemasJobResult implements Result<GetAllSchemasJobResult> {
-  private List<String> schemas = new LinkedList<>();
+public class GetAllSchemasJobResult implements ResultSetResult<GetAllSchemasJobResult> {
+  private List<Schema> schemas = new LinkedList<>();
 
   @Override
   public GetAllSchemasJobResult populateFromResultSet(ResultSet rs) throws ViewException {
     if (null == rs) return this;
     try {
       while (rs.next()) {
-        this.schemas.add(rs.getString("TABLE_SCHEM"));
+        this.schemas.add(new Schema(rs.getString("TABLE_SCHEM")));
       }
     } catch (SQLException e) {
       throw new ViewException("Exception while reading result : " + e.getMessage(), e);

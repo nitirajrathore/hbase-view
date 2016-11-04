@@ -35,5 +35,4 @@ public class GetAllSchemasJob extends ResultableSyncPhoenixJob<GetAllSchemasJobR
     this.getResultObject().populateFromResultSet(this.getResultSet());
     return this.getResultObject();
   }
-
 }

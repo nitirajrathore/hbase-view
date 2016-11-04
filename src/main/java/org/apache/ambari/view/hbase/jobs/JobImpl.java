@@ -18,19 +18,42 @@
 
 package org.apache.ambari.view.hbase.jobs;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.ambari.view.hbase.core.service.internal.ViewServiceFactory;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
-public interface Job {
-  String serializeData();
+public abstract class JobImpl implements Job {
+  @JsonIgnore
+  private ViewServiceFactory viewServiceFactory;
 
-  String getJobType();
+  private String owner;
 
-  String getOwner();
+  protected JobImpl() {
+  }
+
+  public String getOwner(){
+    return owner;
+  }
+
+  public void setOwner(String owner){
+    this.owner = owner;
+  }
+
+  public String serializeData() {
+    return "{}";
+  }
+
+  public String getJobType() {
+    return this.getClass().getSimpleName();
+  }
 
   @JsonIgnore
-  ViewServiceFactory getViewServiceFactory();
+  public ViewServiceFactory getViewServiceFactory() {
+    return viewServiceFactory;
+  }
 
   @JsonIgnore
-  void setViewServiceFactory(ViewServiceFactory viewServiceFactory);
+  public void setViewServiceFactory(ViewServiceFactory viewServiceFactory) {
+    if( null != viewServiceFactory) // this can only be set once.
+      this.viewServiceFactory = viewServiceFactory;
+  }
 }
