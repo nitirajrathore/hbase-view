@@ -43,7 +43,7 @@ public class StorageImpl implements Storage {
 
   @Override
   public <T extends PersistentResource> T read(Class<? extends T> klass, Object id) throws ItemNotFoundException {
-    return null;
+    return getEntityManager().find(klass, id);
   }
 
   @Override

@@ -59,6 +59,9 @@ public class PhoenixJobActor extends AbstractActor {
             PhoenixJobActor.this.sender().tell(result, ActorRef.noSender());
           } catch (Exception e) {
             log.error("exception occurred.", e);
+            PhoenixJobActor.this.sender().tell(
+              new Status.Failure(new ViewException("exception occurred while executing job : " + e.getMessage(), e)), PhoenixJobActor.this.self()
+            );
           } finally {
             if (null != phoenixConnection && !phoenixConnection.isClosed()) {
               try {
@@ -88,7 +91,7 @@ public class PhoenixJobActor extends AbstractActor {
           String errorMsg = null;
 
           try {
-            phoenixConnection = job.getPhoenixConnection();
+             phoenixConnection = job.getPhoenixConnection();
             try {
               executeJob(job, phoenixConnection);
             } catch (Exception e) {
@@ -126,7 +129,7 @@ public class PhoenixJobActor extends AbstractActor {
           long duration = System.currentTimeMillis() - pj.getSubmittedDate().getTime();
           pj.setStatus(currStatus.name());
           if( null != errorMsg ){
-            pj.setError(errorMsg);
+            pj.setError(errorMsg.getBytes());
           }
           pj.setProgress(progress);
           pj.setDuration(duration);
@@ -166,9 +169,9 @@ public class PhoenixJobActor extends AbstractActor {
     }
   }
 
-  private PhoenixJob createPersistable(JobImpl job) {
+  private PhoenixJob createPersistable(JobImpl job) throws SQLException {
     PhoenixJob phoenixJob = new PhoenixJob();
-    phoenixJob.setData(job.serializeData());
+    phoenixJob.setData(job.serializeData().getBytes());
     phoenixJob.setSubmittedDate(new Date());
     phoenixJob.setOwner(job.getOwner());
     phoenixJob.setJobType(job.getJobType());

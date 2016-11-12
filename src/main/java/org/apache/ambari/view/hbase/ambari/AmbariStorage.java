@@ -135,7 +135,7 @@ public class AmbariStorage implements Storage {
   public <T extends PersistentResource> List<T> readAll(Class<? extends T> klass, FilteringStrategy filter) throws org.apache.ambari.view.hbase.core.persistence.PersistenceException {
     LOG.info("Loading all {}-s", klass.getName());
     try {
-      return new ArrayList<>(context.getDataStore().findAll(klass, filter.whereStatement()));
+      return new ArrayList<>(context.getDataStore().findAll(klass, (filter == null) ? null : filter.whereStatement()));
     } catch (org.apache.ambari.view.PersistenceException e) {
       throw new PersistenceException("Exception while loading all objects.", e);
     }

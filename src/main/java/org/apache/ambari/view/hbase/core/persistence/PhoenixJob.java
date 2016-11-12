@@ -20,22 +20,23 @@ package org.apache.ambari.view.hbase.core.persistence;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-import java.sql.Clob;
 import java.util.Date;
 
 @Data
 @NoArgsConstructor
+@ToString(exclude = "error,data")
 public class PhoenixJob extends JobInfoImpl implements PersistentResource {
   private String id;
-  private Clob data;
+  private byte[] data;
   private Date submittedDate;
   private Long duration;
   private String owner;
   private String jobType;
   private String status;
   private Integer progress;
-  private Clob error;
+  private byte[] error;
 
   @Override
   public void override(Object o) {

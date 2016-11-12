@@ -50,7 +50,7 @@ public class ViewActorSystem {
     this.phoenixActor = actorSystem.actorOf(PhoenixActor.props());
     this.phoenixJobActor = actorSystem.actorOf(PhoenixJobActor.props(this.phoenixActor)
                               .withRouter(new RoundRobinPool(40))
-                              .withDispatcher("phoenix-job-dispatcher"));
+                              .withDispatcher("akka.actor.phoenix-job-dispatcher"));
     this.phoenixConnectionActor = actorSystem.actorOf(PhoenixConnectionActor.props(connectionMap));
     this.resultMapperActor = actorSystem.actorOf(ResultMapperActor.props(resultSetMap));
   }
@@ -59,7 +59,7 @@ public class ViewActorSystem {
     if (null == instance) {
       synchronized (ViewActorSystem.class) {
         if (null == instance) {
-          instance = new ViewActorSystem(ActorSystem.create("hbase-view-actor-system"));
+          instance = new ViewActorSystem(ActorSystem.create("hbase-view-actor-system", null, ViewActorSystem.class.getClassLoader()));
         }
       }
     }

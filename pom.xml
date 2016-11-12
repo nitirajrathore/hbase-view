@@ -206,11 +206,12 @@
               <resources>
                 <resource>
                   <directory>src/main/resources</directory>
-                  <filtering>false</filtering>
+                  <filtering>true</filtering>
                   <includes>
                     <include>META-INF/**/*</include>
                     <include>view.xml</include>
                     <include>view.log4j.properties</include>
+                    <include>view.properties</include>
                     <include>application.conf</include>
                   </includes>
                 </resource>

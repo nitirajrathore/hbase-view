@@ -18,6 +18,9 @@
 
 package org.apache.ambari.view.hbase.core.service;
 
+import com.google.common.base.Function;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableList;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ambari.view.hbase.core.ViewException;
 import org.apache.ambari.view.hbase.core.persistence.JobInfo;
@@ -33,6 +36,7 @@ import org.apache.ambari.view.hbase.jobs.impl.GetAllSchemasJob;
 import org.apache.ambari.view.hbase.jobs.impl.GetTablesJob;
 import org.apache.ambari.view.hbase.jobs.phoenix.AsyncPhoenixJob;
 import org.apache.ambari.view.hbase.jobs.result.GetAllSchemasJobResult;
+import org.apache.ambari.view.hbase.pojos.PhoenixJobInfo;
 import org.apache.ambari.view.hbase.pojos.TableRef;
 import org.apache.ambari.view.hbase.pojos.result.Schema;
 
@@ -167,9 +171,15 @@ public class JobService {
     return this.factory.getPhoenixJobService();
   }
 
-  public List<JobInfo> getJobs() throws ServiceException, PersistenceException {
+  public List<PhoenixJobInfo> getJobs() throws ServiceException, PersistenceException {
     List<PhoenixJob> jobs = this.factory.getPhoenixResourceManager().readAll();
-    return new ArrayList<JobInfo>(jobs);
+    ImmutableList<PhoenixJobInfo> pjobs = FluentIterable.from(jobs).transform(new Function<PhoenixJob, PhoenixJobInfo>() {
+      @Override
+      public PhoenixJobInfo apply(PhoenixJob input) {
+        return new PhoenixJobInfo(input);
+      }
+    }).toList();
+    return pjobs;
   }
 
   public List<Schema> getAllSchemas(GetAllSchemasJob getAllSchemasJob) throws ServiceException, PhoenixException {

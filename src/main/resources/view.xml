@@ -57,6 +57,11 @@
         <service-class>org.apache.ambari.view.hbase.rest.DDLRestService</service-class>
     </resource>
 
+    <resource>
+        <name>schemas</name>
+        <service-class>org.apache.ambari.view.hbase.rest.SchemaRestService</service-class>
+    </resource>
+
     <persistence>
         <entity>
             <class>org.apache.ambari.view.hbase.core.persistence.PhoenixJob</class>
