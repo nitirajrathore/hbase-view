@@ -1,0 +1,181 @@
+{
+	"variables": [],
+	"info": {
+		"name": "hbase-phoenix-view",
+		"_postman_id": "34d6c441-e155-0b0c-fde3-aad0e4ede628",
+		"description": "For Ambari it requires same environment for both Entity-Tests as well as Service-Tests\n\nBut for StandAlone it requires different url\nEntity-Tests --> must include /resources in APP_BASE_URL\nService-Tests --> must not include /resources in APP_BASE_URL",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Entity-Tests",
+			"description": "This is the test for entities and requires a different environment as compared to other service tests. This will require /resources/ in base url of StandAlone environment but not in Ambari-Environment",
+			"item": [
+				{
+					"name": "List all PhoenixJobs",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "admin",
+								"password": "admin",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{APP_BASE_URL}}/phoenixJobs",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46YWRtaW4=",
+								"description": ""
+							},
+							{
+								"key": "X-Requested-By",
+								"value": "ambari",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": "list all phoenixjobs"
+					},
+					"response": []
+				},
+				{
+					"name": "List One PhoenixJob",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "admin",
+								"password": "admin",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{APP_BASE_URL}}/phoenixJobs/1",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46YWRtaW4=",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": "list one phoenixjob"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Service-Tests",
+			"description": "This is the service test and requires different environment to work.",
+			"item": [
+				{
+					"name": "Create Schema Job",
+					"request": {
+						"url": "{{APP_BASE_URL}}/resources/schemas",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-Requested-By",
+								"value": "ambari",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46YWRtaW4=",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"schemaName\" : \"myschemaname1\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "list all schemas copy",
+					"request": {
+						"url": "{{APP_BASE_URL}}/resources/schemas",
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Requested-By",
+								"value": "ambari",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46YWRtaW4=",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"schemaName\" : \"myschemaname\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Create table Job",
+			"request": {
+				"url": "http://c6401.ambari.apache.org:8080/api/v1/views/Hbase/versions/0.0.1/instances/p1/resources/tables/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Requested-By",
+						"value": "ambari",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"schemaName\" : \"myschemaname\",\n  \"tableName\" : \"mytableName\"\n}"
+				},
+				"description": "create ambari phoenixjob"
+			},
+			"response": []
+		}
+	]
+}
