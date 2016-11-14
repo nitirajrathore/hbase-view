@@ -22,8 +22,6 @@ import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ambari.view.hbase.core.ViewException;
-import org.apache.ambari.view.hbase.core.persistence.JobInfo;
 import org.apache.ambari.view.hbase.core.persistence.PersistenceException;
 import org.apache.ambari.view.hbase.core.persistence.PhoenixJob;
 import org.apache.ambari.view.hbase.core.service.internal.PhoenixException;
@@ -36,6 +34,7 @@ import org.apache.ambari.view.hbase.jobs.impl.GetAllSchemasJob;
 import org.apache.ambari.view.hbase.jobs.impl.GetTablesJob;
 import org.apache.ambari.view.hbase.jobs.phoenix.AsyncPhoenixJob;
 import org.apache.ambari.view.hbase.jobs.result.GetAllSchemasJobResult;
+import org.apache.ambari.view.hbase.jobs.result.Result;
 import org.apache.ambari.view.hbase.pojos.PhoenixJobInfo;
 import org.apache.ambari.view.hbase.pojos.TableRef;
 import org.apache.ambari.view.hbase.pojos.result.Schema;
@@ -66,7 +65,7 @@ public class JobService {
     else throw new ServiceException("Illegal Argument");
   }
 
-  public List<TableRef> getTables(GetTablesJob getTablesJob) throws ServiceException, ViewException, PhoenixException {
+  public List<TableRef> getTables(GetTablesJob getTablesJob) throws ServiceException, PhoenixException {
 //    List<TableRef> tables = new LinkedList<TableRef>();
 //    try {
 //      try (
@@ -85,7 +84,7 @@ public class JobService {
     return null;
   }
 
-  public List<TableRef> getTablesActor(GetTablesJob getTablesJob) throws ServiceException, ViewException, PhoenixException {
+  public List<TableRef> getTablesActor(GetTablesJob getTablesJob) throws ServiceException, PhoenixException {
 //    List<TableRef> tables = new LinkedList<TableRef>();
 //    try {
 //      try (
@@ -121,7 +120,7 @@ public class JobService {
     return null;
   }
 
-  public List<TableRef> createTable(CreateTableJob createTableJob) throws ServiceException, ViewException, PhoenixException {
+  public List<TableRef> createTable(CreateTableJob createTableJob) throws ServiceException, PhoenixException {
 //    List<TableRef> tables = new LinkedList<TableRef>();
 //    try {
 //      try (
@@ -163,15 +162,15 @@ public class JobService {
     return new ArrayList<TableRef>();
   }
 
-  public JobInfo getJob(String id) throws JobNotFoundException, ServiceException {
-    return getPhoenixJobService().getPhoenixJob(id);
+  public PhoenixJobInfo getPhoenixJob(String id) throws JobNotFoundException, ServiceException {
+    PhoenixJob job = getPhoenixJobService().getPhoenixJob(id);
+
+    if(null == job) throw new JobNotFoundException(String.format("phoenix job with id %s not found.", id));
+
+    return new PhoenixJobInfo(job);
   }
 
-  private PhoenixJobService getPhoenixJobService() {
-    return this.factory.getPhoenixJobService();
-  }
-
-  public List<PhoenixJobInfo> getJobs() throws ServiceException, PersistenceException {
+  public List<PhoenixJobInfo> getPhoenixJobs() throws ServiceException, PersistenceException {
     List<PhoenixJob> jobs = this.factory.getPhoenixResourceManager().readAll();
     ImmutableList<PhoenixJobInfo> pjobs = FluentIterable.from(jobs).transform(new Function<PhoenixJob, PhoenixJobInfo>() {
       @Override
@@ -180,6 +179,10 @@ public class JobService {
       }
     }).toList();
     return pjobs;
+  }
+
+  public Result getJobResult(String jobId) throws ServiceException {
+    return this.getPhoenixJobService().getResult(jobId);
   }
 
   public List<Schema> getAllSchemas(GetAllSchemasJob getAllSchemasJob) throws ServiceException, PhoenixException {
@@ -195,5 +198,13 @@ public class JobService {
 
   private void fillDetails(CreateSchemaJob createSchemaJob) {
      createSchemaJob.setOwner(this.context.getUser());
+  }
+
+  private PhoenixJobService getPhoenixJobService() {
+    return this.factory.getPhoenixJobService();
+  }
+
+  private ViewServiceFactory getFactory(){
+    return factory;
   }
 }

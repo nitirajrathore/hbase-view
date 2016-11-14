@@ -8,8 +8,8 @@ import akka.japi.pf.FI;
 import akka.japi.pf.ReceiveBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ambari.view.hbase.core.JobStatus;
-import org.apache.ambari.view.hbase.core.ViewException;
 import org.apache.ambari.view.hbase.core.persistence.PhoenixJob;
+import org.apache.ambari.view.hbase.core.service.ServiceException;
 import org.apache.ambari.view.hbase.core.service.internal.PhoenixException;
 import org.apache.ambari.view.hbase.core.service.internal.PhoenixJobHelper;
 import org.apache.ambari.view.hbase.jobs.JobImpl;
@@ -60,7 +60,7 @@ public class PhoenixJobActor extends AbstractActor {
           } catch (Exception e) {
             log.error("exception occurred.", e);
             PhoenixJobActor.this.sender().tell(
-              new Status.Failure(new ViewException("exception occurred while executing job : " + e.getMessage(), e)), PhoenixJobActor.this.self()
+              new Status.Failure(new ServiceException("exception occurred while executing job : " + e.getMessage(), e)), PhoenixJobActor.this.self()
             );
           } finally {
             if (null != phoenixConnection && !phoenixConnection.isClosed()) {
@@ -149,7 +149,7 @@ public class PhoenixJobActor extends AbstractActor {
       build();
   }
 
-  private void executeJob(IPhoenixJob job, Connection phoenixConnection) throws PhoenixException, ViewException, SQLException {
+  private void executeJob(IPhoenixJob job, Connection phoenixConnection) throws PhoenixException, ServiceException {
     if (job instanceof GetAllSchemasJob) {
       ResultSet resultSet = new PhoenixJobHelper().getSchemas(phoenixConnection);
       ((GetAllSchemasJob) job).setResultSet(resultSet);// keep connection alive till someone retrives job
@@ -165,7 +165,7 @@ public class PhoenixJobActor extends AbstractActor {
       QueryJob j = (QueryJob) job;
       new PhoenixJobHelper().execute(phoenixConnection, j);
     } else {
-      throw new ViewException("Cannot handle this type of job. Job = " + job);
+      throw new ServiceException("Cannot handle this type of job. Job = " + job);
     }
   }
 

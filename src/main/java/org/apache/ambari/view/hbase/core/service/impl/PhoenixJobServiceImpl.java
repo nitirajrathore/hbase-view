@@ -31,6 +31,7 @@ import org.apache.ambari.view.hbase.jobs.phoenix.AsyncPhoenixJob;
 import org.apache.ambari.view.hbase.jobs.phoenix.SyncPhoenixJob;
 import org.apache.ambari.view.hbase.jobs.result.Result;
 import org.apache.ambari.view.hbase.jobs.result.ResultSetResult;
+import org.apache.ambari.view.hbase.messages.FetchResultMessage;
 import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
@@ -76,7 +77,18 @@ public class PhoenixJobServiceImpl implements PhoenixJobService {
 
   @Override
   public Result getResult(String id) throws ServiceException {
-    return null;
+    FetchResultMessage msg = new FetchResultMessage(id);
+    ActorRef mapperActor = this.getViewServiceFactory().getActorSystem().getResultMapperActor();
+    Timeout timeout = new Timeout(Duration.create(Constants.FETCH_RESULT_TIMEOUT_SECS, "seconds"));
+    Future<Object> future = ask(mapperActor, msg, timeout);
+    Result result = null;
+    try {
+      result = (Result) Await.result(future, timeout.duration());
+    } catch (Exception e) {
+      throw new ServiceException("Exception while getting result from backend :" + e.getMessage(), e);
+    }
+    return result;
+
   }
 
   @Override
@@ -93,7 +105,7 @@ public class PhoenixJobServiceImpl implements PhoenixJobService {
     log.info("Executing job : {}", job);
     job.setViewServiceFactory(this.getViewServiceFactory());
     ActorRef actorRef = this.getViewServiceFactory().getActorSystem().getPhoenixActor();
-    Timeout timeout = new Timeout(Duration.create(5000, "seconds"));
+    Timeout timeout = new Timeout(Duration.create(Constants.JOB_EXECUTION_TIMEOUT_SECS, "seconds"));
     Future<Object> future = ask(actorRef, job, timeout);
     T result = null;
     try {

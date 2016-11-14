@@ -19,7 +19,7 @@
 package org.apache.ambari.view.hbase.jobs.impl;
 
 import lombok.Data;
-import org.apache.ambari.view.hbase.core.ViewException;
+import org.apache.ambari.view.hbase.core.service.ServiceException;
 import org.apache.ambari.view.hbase.jobs.ResultSetJob;
 import org.apache.ambari.view.hbase.jobs.phoenix.ResultableSyncPhoenixJob;
 import org.apache.ambari.view.hbase.jobs.result.GetAllSchemasJobResult;
@@ -31,7 +31,7 @@ public class GetAllSchemasJob extends ResultableSyncPhoenixJob<GetAllSchemasJobR
   }
 
   @Override
-  public GetAllSchemasJobResult getResult() throws ViewException {
+  public GetAllSchemasJobResult getResult() throws ServiceException {
     this.getResultObject().populateFromResultSet(this.getResultSet());
     return this.getResultObject();
   }

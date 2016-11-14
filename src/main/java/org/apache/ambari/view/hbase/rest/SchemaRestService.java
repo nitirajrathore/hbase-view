@@ -19,7 +19,6 @@
 package org.apache.ambari.view.hbase.rest;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ambari.view.hbase.core.ViewException;
 import org.apache.ambari.view.hbase.core.service.ServiceException;
 import org.apache.ambari.view.hbase.core.service.internal.PhoenixException;
 import org.apache.ambari.view.hbase.jobs.impl.CreateSchemaJob;
@@ -31,7 +30,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
@@ -45,9 +43,9 @@ public class SchemaRestService extends BaseRestService{
   public List<Schema> getAllSchemas(){
     try {
       return getJobService().getAllSchemas(new GetAllSchemasJob());
-    } catch (ViewException | ServiceException | PhoenixException e) {
+    } catch ( ServiceException | PhoenixException e) {
       log.error("Exceptoin while getting all schemas.", e);
-      throw new WebApplicationException(e);
+      throw new ViewException(e);
     }
   }
 
@@ -55,9 +53,9 @@ public class SchemaRestService extends BaseRestService{
   public String createSchema(CreateSchemaJob createSchemaJob){
     try {
       return getJobService().createSchema(createSchemaJob);
-    } catch (ViewException | ServiceException e) {
+    } catch (ServiceException e) {
       log.error("Exceptoin while getting all schemas.", e);
-      throw new WebApplicationException(e);
+      throw new ViewException(e);
     }
   }
 

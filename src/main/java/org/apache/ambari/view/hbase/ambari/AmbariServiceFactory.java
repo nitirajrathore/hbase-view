@@ -19,9 +19,9 @@
 package org.apache.ambari.view.hbase.ambari;
 
 import org.apache.ambari.view.ViewContext;
-import org.apache.ambari.view.hbase.core.ViewException;
 import org.apache.ambari.view.hbase.core.service.IServiceFactory;
 import org.apache.ambari.view.hbase.core.service.JobService;
+import org.apache.ambari.view.hbase.core.service.ServiceException;
 import org.apache.ambari.view.hbase.core.service.internal.ViewServiceFactory;
 
 import java.util.Properties;
@@ -34,7 +34,7 @@ public class AmbariServiceFactory implements IServiceFactory {
   private Properties properties = null;
   private JobService jobService;
 
-  public AmbariServiceFactory(ViewContext viewContext, Properties properties) throws ViewException {
+  public AmbariServiceFactory(ViewContext viewContext, Properties properties) throws ServiceException {
     this.viewContext = viewContext;
     this.configurator = new AmbariConfigurator(viewContext, properties);
     this.storage = new AmbariStorage(viewContext);

@@ -18,9 +18,11 @@
 
 package org.apache.ambari.view.hbase.messages;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class ResultMessageImpl implements ResultMessage{
   private String jobId;
 }

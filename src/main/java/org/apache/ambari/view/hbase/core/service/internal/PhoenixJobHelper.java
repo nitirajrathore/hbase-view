@@ -39,6 +39,7 @@ public class PhoenixJobHelper {
         getTablesJob.getTableNamePattern(), new String[]{TABLES});
       return rs;
     } catch (SQLException e) {
+      log.error("Exception occurred while getting Tables.", e);
       throw new PhoenixException(e);
     }
   }
@@ -48,6 +49,7 @@ public class PhoenixJobHelper {
       ResultSet rs = connection.getMetaData().getSchemas();
       return rs;
     } catch (SQLException e) {
+      log.error("Exception occurred while getting Schemas.", e);
       throw new PhoenixException(e);
     }
   }
@@ -58,7 +60,7 @@ public class PhoenixJobHelper {
       job.setStatement(statement);
       return statement.executeUpdate(job.getQuery());
     } catch (SQLException e) {
-      log.error("Exception occurred while executing", e);
+      log.error("Exception occurred while executing job : {}", job, e);
       throw new PhoenixException(e);
     }
   }
@@ -69,7 +71,7 @@ public class PhoenixJobHelper {
       job.setStatement(statement);
       return statement.execute(job.getQuery());
     } catch (SQLException e) {
-      log.error("Exception occurred while executing", e);
+      log.error("Exception occurred while executing job {}", job, e);
       throw new PhoenixException(e);
     }
   }
@@ -82,7 +84,7 @@ public class PhoenixJobHelper {
       job.setResultSet(resultSet);
       return resultSet;
     } catch (SQLException e) {
-      log.error("Exception occurred while executing", e);
+      log.error("Exception occurred while executing job {}", job, e);
       throw new PhoenixException(e);
     }
   }

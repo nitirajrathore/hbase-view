@@ -16,12 +16,23 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase;
+package org.apache.ambari.view.hbase.rest;
 
-public interface Constants {
-  String PHOENIX_QUERYSERVER_CLIENT_DRIVER = "org.apache.phoenix.queryserver.client.Driver";
-  int JOB_SUBMISSION_TIMEOUT_SECS = 120;
-  long CONNECTION_INIT_TIMEOUT = 200;
-  long FETCH_RESULT_TIMEOUT_SECS = 120;
-  long JOB_EXECUTION_TIMEOUT_SECS = 3000;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.Provider;
+
+@Provider
+public class ViewExceptionMapper implements
+  ExceptionMapper<ViewException> {
+
+  @Override
+  public Response toResponse(ViewException ex) {
+    ErrorMessage em = new ErrorMessage(ex);
+    return Response.status(em.getStatus())
+      .entity(em)
+      .type(MediaType.APPLICATION_JSON).
+        build();
+  }
 }

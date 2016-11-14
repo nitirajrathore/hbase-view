@@ -18,8 +18,8 @@
 
 package org.apache.ambari.view.hbase.messages;
 
-import lombok.Data;
-
-@Data
 public class FetchResultMessage extends ResultMessageImpl {
+  public FetchResultMessage(String jobId) {
+    super(jobId);
+  }
 }

@@ -18,13 +18,14 @@
 
 package org.apache.ambari.view.hbase.rest;
 
-import org.apache.ambari.view.hbase.core.ViewException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ambari.view.hbase.core.persistence.PersistenceException;
 import org.apache.ambari.view.hbase.core.persistence.PhoenixJob;
+import org.apache.ambari.view.hbase.core.service.JobNotFoundException;
 import org.apache.ambari.view.hbase.core.service.ServiceException;
+import org.apache.ambari.view.hbase.jobs.result.Result;
 import org.apache.ambari.view.hbase.pojos.PhoenixJobInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.lang.NotImplementedException;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -36,25 +37,18 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
+@Slf4j
 @Path("/phoenixJobs")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class PhoenixJobRestService extends BaseRestService {
-  private final static Logger LOG =
-    LoggerFactory.getLogger(PhoenixJobRestService.class);
-
-  @GET
-  @Path("/hello")
-  public String hello(){
-    return "Hello";
-  }
 
   @GET
   @Path("/")
-  public List<PhoenixJobInfo> getPhoenixJobs() throws ViewException, ServiceException, PersistenceException {
-    LOG.info("getPhoenixJobs Getting serviceFactory..  ");
-    List<PhoenixJobInfo> jobs = getServerFactory().getJobService().getJobs();
-    LOG.info("all jobs : " + jobs);
+  public List<PhoenixJobInfo> getPhoenixJobs() throws ServiceException, PersistenceException {
+    log.info("getPhoenixJobs Getting serviceFactory..  ");
+    List<PhoenixJobInfo> jobs = getServerFactory().getJobService().getPhoenixJobs();
+    log.info("all jobs : " + jobs);
     return jobs;
   }
 
@@ -62,31 +56,34 @@ public class PhoenixJobRestService extends BaseRestService {
   @POST
   @Path("/")
   public String submitPhoenixJob(PhoenixJob phoenixJob) {
-//    LOG.info("getPhoenixJobs Getting serviceFactory..  ");
-//    IServiceFactory serviceFactory = ServiceFactory.getInstance();
-//    LOG.info("getPhoenixJobs Got serviceFactory : " + serviceFactory);
-//    PhoenixJobService phoenixJobService = serviceFactory.getJobService();
-//    LOG.info("PhoenixJobService : {} ", phoenixJobService);
-//
-//    String id = phoenixJobService.submitAsyncPhoenixJob(phoenixJob);
-//    return id;
-
-    return null;
+    throw new NotImplementedException("Submission of generic phoenixJob not implemented.");
   }
 
   @GET
   @Path("/{id}")
   public Response getPhoenixJob(@PathParam("id") String id) {
-//    LOG.info("Getting serviceFactory..  ");
-//    IServiceFactory serviceFactory = ServiceFactory.getInstance();
-//    LOG.info("Got serviceFactory : " + serviceFactory);
-//    try {
-//      IPhoenixJob pj = serviceFactory.getJobService().getPhoenixJob(id);
-//      return Response.ok(pj).build();
-//    } catch (ItemNotFoundException itemNotFoundException) {
-//      LOG.error("exception : ", itemNotFoundException);
-//      throw new ServiceFormattedException(itemNotFoundException);
-//    }
-    return null;
+    try {
+      return Response.ok(this.getJobService().getPhoenixJob(id)).build();
+    } catch (JobNotFoundException e) {
+      log.error("Error while getting jobId : {}.", id, e);
+      throw new ViewException(e, Response.Status.NOT_FOUND);
+    } catch (ServiceException e) {
+      log.error("Error while getting jobId : {}.", id, e);
+      throw new ViewException(e);
+    }
+  }
+
+  @GET
+  @Path("/{id}/result")
+  public Response getPhoenixJobResult(@PathParam("id") String id){
+    log.info("Getting result for jobId : {}", id);
+    try {
+      Result result = this.getJobService().getJobResult(id);
+      log.debug("Returning result : {}", result);
+      return Response.ok(result).build();
+    } catch (ServiceException e) {
+      log.error("Error while getting result for jobId : {}.", id, e);
+      throw new ViewException(e);
+    }
   }
 }

@@ -21,7 +21,6 @@ package org.apache.ambari.view.hbase.core.service;
 import org.apache.ambari.view.ViewContext;
 import org.apache.ambari.view.hbase.ambari.AmbariServiceFactory;
 import org.apache.ambari.view.hbase.ambari.SafeViewContext;
-import org.apache.ambari.view.hbase.core.ViewException;
 import org.apache.ambari.view.hbase.core.service.impl.StandAloneServiceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +42,7 @@ public class ServiceFactory {
     this.viewContext = viewContext;
   }
 
-  private Properties getViewProperties() throws ViewException {
+  private Properties getViewProperties() throws ServiceException {
     if (!propertiesLoaded) {
       synchronized (ServiceFactory.class) {
         if (!propertiesLoaded) {
@@ -60,7 +59,7 @@ public class ServiceFactory {
   }
 
 
-  public IServiceFactory getInstance() throws ViewException {
+  public IServiceFactory getInstance() throws ServiceException {
     if (null != viewContext) { // provide standalone service factory
       LOG.info("Creating AmbariServiceFactory with view context : " + viewContext);
       return new AmbariServiceFactory(new SafeViewContext(viewContext), getViewProperties());
@@ -70,7 +69,7 @@ public class ServiceFactory {
     }
   }
 
-  private synchronized static void loadViewProperties() throws ViewException {
+  private synchronized static void loadViewProperties() throws ServiceException {
     try {
       LOG.info("Loading view.properties ");
       ClassLoader classLoader = ServiceFactory.class.getClassLoader();
@@ -79,7 +78,7 @@ public class ServiceFactory {
       if (null != propsStream)
         viewProperties.load(propsStream);
     } catch (IOException e) {
-      throw new ViewException("Failed to load view.properties.", e);
+      throw new ServiceException("Failed to load view.properties.", e);
     }
   }
 }

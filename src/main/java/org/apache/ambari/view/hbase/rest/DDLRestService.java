@@ -18,9 +18,8 @@
 
 package org.apache.ambari.view.hbase.rest;
 
-import org.apache.ambari.view.hbase.core.service.internal.PhoenixException;
-import org.apache.ambari.view.hbase.core.ViewException;
 import org.apache.ambari.view.hbase.core.service.ServiceException;
+import org.apache.ambari.view.hbase.core.service.internal.PhoenixException;
 import org.apache.ambari.view.hbase.jobs.impl.AlterTableJob;
 import org.apache.ambari.view.hbase.jobs.impl.CreateTableJob;
 import org.apache.ambari.view.hbase.jobs.impl.GetTablesJob;
@@ -51,7 +50,7 @@ public class DDLRestService extends BaseRestService{
     try {
 //      return getJobService().getTables(new GetTablesJob(null, null, null));
       return getJobService().getTablesActor(new GetTablesJob(null,null,null));
-    } catch (ServiceException | ViewException | PhoenixException e) {
+    } catch (ServiceException | PhoenixException e) {
       LOG.error("Error while getting tables.", e);
       throw new WebApplicationException(e);
     }
@@ -62,7 +61,7 @@ public class DDLRestService extends BaseRestService{
   public String createTable(CreateTableJob createTableJob){
     try {
       return getJobService().submitJob(createTableJob);
-    } catch (ServiceException | ViewException e) {
+    } catch (ServiceException e) {
       LOG.error("Error while getting tables.", e);
       throw new WebApplicationException(e);
     }
@@ -73,7 +72,7 @@ public class DDLRestService extends BaseRestService{
   public String alterTable(AlterTableJob alterTableJob){
     try {
       return getJobService().submitJob(alterTableJob);
-    } catch (ServiceException | ViewException e) {
+    } catch (ServiceException e) {
       LOG.error("Error while getting tables.", e);
       throw new WebApplicationException(e);
     }

@@ -16,25 +16,42 @@
 * limitations under the License.
 */
 
-package org.apache.ambari.view.hbase.core;
+package org.apache.ambari.view.hbase.rest;
 
-public class ViewException extends Exception {
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+
+public class ViewException extends WebApplicationException {
+  private boolean verbose = false;
+
   public ViewException() {
   }
 
-  public ViewException(String message) {
-    super(message);
+  public ViewException(Response response) {
+    super(response);
   }
 
-  public ViewException(String message, Throwable cause) {
-    super(message, cause);
+  public ViewException(int status) {
+    super(status);
+  }
+
+  public ViewException(Response.Status status) {
+    super(status);
   }
 
   public ViewException(Throwable cause) {
     super(cause);
   }
 
-  public ViewException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-    super(message, cause, enableSuppression, writableStackTrace);
+  public ViewException(Throwable cause, Response response) {
+    super(cause, response);
+  }
+
+  public ViewException(Throwable cause, int status) {
+    super(cause, status);
+  }
+
+  public ViewException(Throwable cause, Response.Status status) {
+    super(cause, status);
   }
 }

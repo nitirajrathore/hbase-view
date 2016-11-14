@@ -21,9 +21,9 @@ package org.apache.ambari.view.hbase.ambari;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ambari.view.hbase.Constants;
 import org.apache.ambari.view.hbase.core.PhoenixConnection;
-import org.apache.ambari.view.hbase.core.ViewException;
 import org.apache.ambari.view.hbase.core.configs.PhoenixConfig;
 import org.apache.ambari.view.hbase.core.service.PhoenixConnectionManager;
+import org.apache.ambari.view.hbase.core.service.ServiceException;
 import org.apache.ambari.view.hbase.core.service.internal.PhoenixException;
 import org.apache.ambari.view.hbase.core.service.internal.ViewActorSystem;
 
@@ -45,7 +45,7 @@ public class AmbariPhoenixConnectionManager extends PhoenixConnectionManager {
     }
   }
 
-  public static AmbariPhoenixConnectionManager getInstance() throws ViewException {
+  public static AmbariPhoenixConnectionManager getInstance() throws ServiceException {
     if (null == manager) {
       synchronized (AmbariPhoenixConnectionManager.class) {
         if (null == manager) {
@@ -54,7 +54,7 @@ public class AmbariPhoenixConnectionManager extends PhoenixConnectionManager {
             Class<?> klass2 = Class.forName(Constants.PHOENIX_QUERYSERVER_CLIENT_DRIVER);
           } catch (ClassNotFoundException e) {
             log.error("Cannot register the phoenix Driver", e);
-            throw new ViewException(e);
+            throw new ServiceException(e);
           }
 
         }

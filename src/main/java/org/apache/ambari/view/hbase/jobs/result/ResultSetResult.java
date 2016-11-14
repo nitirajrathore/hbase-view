@@ -18,10 +18,10 @@
 
 package org.apache.ambari.view.hbase.jobs.result;
 
-import org.apache.ambari.view.hbase.core.ViewException;
+import org.apache.ambari.view.hbase.core.service.ServiceException;
 
 import java.sql.ResultSet;
 
 public interface ResultSetResult<T extends Result<T>> extends Result<T> {
-  T populateFromResultSet(ResultSet rs) throws ViewException;
+  T populateFromResultSet(ResultSet rs) throws ServiceException;
 }

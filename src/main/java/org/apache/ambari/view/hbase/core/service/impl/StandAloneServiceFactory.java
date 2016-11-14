@@ -18,7 +18,6 @@
 
 package org.apache.ambari.view.hbase.core.service.impl;
 
-import org.apache.ambari.view.hbase.core.ViewException;
 import org.apache.ambari.view.hbase.core.persistence.DatabaseServiceFactory;
 import org.apache.ambari.view.hbase.core.persistence.StorageImpl;
 import org.apache.ambari.view.hbase.core.service.Configurator;
@@ -26,6 +25,7 @@ import org.apache.ambari.view.hbase.core.service.Context;
 import org.apache.ambari.view.hbase.core.service.ContextImpl;
 import org.apache.ambari.view.hbase.core.service.IServiceFactory;
 import org.apache.ambari.view.hbase.core.service.JobService;
+import org.apache.ambari.view.hbase.core.service.ServiceException;
 import org.apache.ambari.view.hbase.core.service.internal.ViewServiceFactory;
 
 import java.util.Properties;
@@ -37,7 +37,7 @@ public class StandAloneServiceFactory implements IServiceFactory {
   private final JobService jobService;
   private final DatabaseServiceFactory dsf = DatabaseServiceFactory.getInstance();
 
-  public StandAloneServiceFactory(Properties viewProperties) throws ViewException {
+  public StandAloneServiceFactory(Properties viewProperties) throws ServiceException {
     this.viewProperties = viewProperties;
     this.configurator = new ConfiguratorImpl(viewProperties);
     this.context = new ContextImpl(viewProperties.getProperty("USER"));

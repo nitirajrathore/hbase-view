@@ -20,9 +20,9 @@ package org.apache.ambari.view.hbase.rest;
 
 import com.google.inject.Inject;
 import org.apache.ambari.view.ViewContext;
-import org.apache.ambari.view.hbase.core.ViewException;
 import org.apache.ambari.view.hbase.core.service.IServiceFactory;
 import org.apache.ambari.view.hbase.core.service.JobService;
+import org.apache.ambari.view.hbase.core.service.ServiceException;
 import org.apache.ambari.view.hbase.core.service.ServiceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,12 +34,12 @@ public class BaseRestService {
   @Inject
   protected ViewContext viewContext;
 
-  protected IServiceFactory getServerFactory() throws ViewException {
+  protected IServiceFactory getServerFactory() throws ServiceException {
     LOG.info("Creating serviceFactory..  ");
     return new ServiceFactory(viewContext).getInstance();
   }
 
-  protected JobService getJobService() throws ViewException {
+  protected JobService getJobService() throws ServiceException {
     return getServerFactory().getJobService();
   }
 }

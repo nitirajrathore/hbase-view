@@ -25,7 +25,7 @@ import akka.actor.Status;
 import akka.japi.pf.FI;
 import akka.japi.pf.ReceiveBuilder;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ambari.view.hbase.core.ViewException;
+import org.apache.ambari.view.hbase.core.service.ServiceException;
 import org.apache.ambari.view.hbase.core.service.internal.ViewActorSystem;
 import org.apache.ambari.view.hbase.messages.HoldResultMessage;
 import org.apache.ambari.view.hbase.messages.RemoveResultMapping;
@@ -72,6 +72,7 @@ public class ResultMapperActor extends AbstractActor {
         // always forward it to respective actor
         @Override
         public void apply(ResultMessage resultMessage) throws Exception {
+          log.info("received resultMessage : {}", resultMessage);
           ActorRef actorRef = resultSetMap.get(resultMessage.getJobId());
           if (null != actorRef) {
             log.info("forwarding message {} ", resultMessage);
@@ -79,7 +80,7 @@ public class ResultMapperActor extends AbstractActor {
           } else {
             // TODO : confirm this implementation. Will work only in case of ask pattern.
             log.info("Actor not found for id : {} sending message.", resultMessage.getJobId());
-            sender().tell(new Status.Failure(new ViewException("Job not found with id : " + resultMessage.getJobId())), self());
+            sender().tell(new Status.Failure(new ServiceException("Job not found with id : " + resultMessage.getJobId())), self());
           }
         }
       })

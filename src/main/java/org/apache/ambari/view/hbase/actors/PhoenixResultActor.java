@@ -23,6 +23,7 @@ import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.japi.pf.FI;
 import akka.japi.pf.ReceiveBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ambari.view.hbase.core.JobStatus;
 import org.apache.ambari.view.hbase.core.persistence.PhoenixJob;
 import org.apache.ambari.view.hbase.jobs.phoenix.ResultableAsyncPhoenixJob;
@@ -30,6 +31,7 @@ import org.apache.ambari.view.hbase.messages.FetchResultMessage;
 import org.apache.ambari.view.hbase.messages.RemoveResultMapping;
 import scala.PartialFunction;
 
+@Slf4j
 public class PhoenixResultActor extends AbstractActor {
 
   private final ResultableAsyncPhoenixJob job;
@@ -50,6 +52,7 @@ public class PhoenixResultActor extends AbstractActor {
       .match(FetchResultMessage.class, new FI.UnitApply<FetchResultMessage>() {
         @Override
         public void apply(FetchResultMessage fetchResultMessage) throws Exception {
+          log.info("Received fetchResultMessage : {}", fetchResultMessage);
           sender().tell(job.getResult(), self());
           job.getPhoenixConnection().close();
           mapperActor.tell(new RemoveResultMapping(job.getPersistentResource().getId()), self());

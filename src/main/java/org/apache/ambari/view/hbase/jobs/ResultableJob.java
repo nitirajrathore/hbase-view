@@ -18,11 +18,11 @@
 
 package org.apache.ambari.view.hbase.jobs;
 
-import org.apache.ambari.view.hbase.core.ViewException;
+import org.apache.ambari.view.hbase.core.service.ServiceException;
 import org.apache.ambari.view.hbase.jobs.result.Result;
 
 public interface ResultableJob<T extends Result<T>> {
-  T getResult() throws ViewException;
+  T getResult() throws ServiceException;
 
   void setResult(T t);
 }
